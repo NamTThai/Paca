@@ -1,5 +1,6 @@
 package com.dreamteam.paca;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -41,6 +42,10 @@ public class GalleryActivity extends ActionBarActivity {
         switch (id) {
             case R.id.action_upload:
                 new ImageFetcher(this).execute();
+                return true;
+            case R.id.action_OpenCamera:
+                Intent intent = new Intent(this,CameraActivity.class);
+                this.startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
