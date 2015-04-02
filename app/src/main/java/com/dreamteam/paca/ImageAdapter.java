@@ -4,43 +4,53 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
+
+import com.android.volley.toolbox.NetworkImageView;
+
+import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
-    private Integer[] mThumbIds = {
-            R.drawable.ic_action_upload, R.drawable.ic_launcher
-    };
+    private final static String mAddressesUri = "http://nthai.cs.trincoll.edu/Pictures/";
     private Context mContext;
+    private ArrayList<String> mInitialAddresses;
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, ArrayList<String> initial) {
         mContext = c;
+        mInitialAddresses = initial;
     }
 
+    @Override
     public int getCount() {
-        return mThumbIds.length;
+        return mInitialAddresses.size();
     }
 
+    @Override
     public Object getItem(int position) {
-        return null;
+        return mInitialAddresses.get(position);
     }
 
+    @Override
     public long getItemId(int position) {
         return 0;
     }
 
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+        NetworkImageView networkImageView;
         if (convertView == null) {
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+            networkImageView = new NetworkImageView(mContext);
         } else {
-            imageView = (ImageView) convertView;
+            networkImageView = (NetworkImageView) convertView;
         }
 
-        imageView.setImageResource(mThumbIds[position]);
-        return imageView;
+
+        if (mInitialAddresses.size() <= position) {
+            return networkImageView;
+        }
+
+        String imageUrl = mAddressesUri + mInitialAddresses.get(position);
+
+        networkImageView.setImageUrl(imageUrl, ((GalleryActivity) mContext).getImageLoader());
+        return networkImageView;
     }
 }
