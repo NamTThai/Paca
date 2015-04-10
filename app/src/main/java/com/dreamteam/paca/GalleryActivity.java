@@ -1,8 +1,10 @@
 package com.dreamteam.paca;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 
 public class GalleryActivity extends ActionBarActivity {
     public static final String TAG = GalleryActivity.class.getName();
+    private static final int CAMERA_REQUEST = 1313;
 
     private final static String mGetPictureAddressesUri = "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php";
 
@@ -90,6 +93,12 @@ public class GalleryActivity extends ActionBarActivity {
                         .setMessage("TODO: upload function not yet implemented")
                         .create()
                         .show();
+                return true;
+            case R.id.action_OpenCamera:
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if(cameraIntent.resolveActivity(getPackageManager()) != null){
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

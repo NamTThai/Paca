@@ -4,8 +4,12 @@
       tools:context=".GalleryHost">
 
     <item android:id="@+id/action_upload"
-          android:title="@string/action_upload"
+          android:title="@string/action_Upload"
           android:icon="@drawable/ic_action_upload"
           app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/action_OpenCamera"
+        android:title="@string/action_OpenCamera"
+        android:icon="@drawable/abc_ic_commit_search_api_mtrl_alpha"
+        app:showAsAction="ifRoom"/>
 </menu>
