@@ -29,6 +29,7 @@ import java.util.ArrayList;
 public class GalleryActivity extends ActionBarActivity {
     public static final String TAG = GalleryActivity.class.getName();
     private static final int CAMERA_REQUEST = 1313;
+    private GPSTracker gps;
 
     private final static String mGetPictureAddressesUri = "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php";
 
@@ -64,13 +65,13 @@ public class GalleryActivity extends ActionBarActivity {
                         fetchImage(response);
                     }
                 }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        new AlertDialog.Builder(GalleryActivity.this)
-                                .setMessage("Fail to contact server")
-                                .create()
-                                .show();
-                    }
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                new AlertDialog.Builder(GalleryActivity.this)
+                        .setMessage("Fail to contact server")
+                        .create()
+                        .show();
+            }
         });
         jsonArrayRequest.setTag(TAG);
         mRequestQueue.add(jsonArrayRequest);
@@ -96,7 +97,7 @@ public class GalleryActivity extends ActionBarActivity {
                 return true;
             case R.id.action_OpenCamera:
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if(cameraIntent.resolveActivity(getPackageManager()) != null){
+                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(cameraIntent, CAMERA_REQUEST);
                 }
                 return true;
@@ -136,5 +137,16 @@ public class GalleryActivity extends ActionBarActivity {
 
         ListView imageStream = (ListView) findViewById(R.id.main_gallery);
         imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
+    }
+
+    public void gpsGetter() {
+        gps = new GPSTracker(GalleryActivity.this);
+
+        if (gps.canGetLocation()) {
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+        } else {
+            gps.showSettingsAlet();
+        }
     }
 }
