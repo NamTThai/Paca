@@ -16,7 +16,7 @@ import android.provider.Settings;
  * Created by Dan Flanagan on 4/8/2015.
  * This does all the framework for using the device's built in gps system
  */
-public class GPSTracker extends Service implements LocationListener{
+public class GPSTracker extends Service implements LocationListener {
 
     private final Context context;
 
@@ -30,27 +30,27 @@ public class GPSTracker extends Service implements LocationListener{
     private double longitude;
 
     private static final long MIN_DISTANCE_FOR_UPDATE = 15;
-    private static final long MIN_TIME_BETWEEN_UPDATES = 1000* 60 * 1;
+    private static final long MIN_TIME_BETWEEN_UPDATES = 1000 * 60 * 1;
 
     protected LocationManager locationManager;
 
-    public GPSTracker(Context context){
+    public GPSTracker(Context context) {
         this.context = context;
         getLocation();
     }
 
-    public Location getLocation(){
+    public Location getLocation() {
         try {
             locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if(!isGPSEnabled && !isNetworkEnabled){
+            if (!isGPSEnabled && !isNetworkEnabled) {
                 showSettingsAlet();
-            }else{
+            } else {
                 this.canGetLocation = true;
 
-                if(isNetworkEnabled) {
+                if (isNetworkEnabled) {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_FOR_UPDATE, this);
 
                     if (locationManager != null) {
@@ -62,13 +62,13 @@ public class GPSTracker extends Service implements LocationListener{
                         }
                     }
                 }
-                if(isGPSEnabled){
-                    if(location == null){
+                if (isGPSEnabled) {
+                    if (location == null) {
                         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BETWEEN_UPDATES, MIN_DISTANCE_FOR_UPDATE, this);
 
-                        if(locationManager != null){
+                        if (locationManager != null) {
                             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                            if(location != null){
+                            if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                             }
@@ -77,7 +77,7 @@ public class GPSTracker extends Service implements LocationListener{
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -90,25 +90,25 @@ public class GPSTracker extends Service implements LocationListener{
         }
     }*/
 
-    public double getLatitude(){
-        if(location != null){
+    public double getLatitude() {
+        if (location != null) {
             latitude = location.getLatitude();
         }
         return latitude;
     }
 
-    public double getLongitude(){
-        if(location != null){
+    public double getLongitude() {
+        if (location != null) {
             longitude = location.getLongitude();
         }
         return longitude;
     }
 
-    public boolean canGetLocation(){
+    public boolean canGetLocation() {
         return this.canGetLocation;
     }
 
-    public void showSettingsAlet(){
+    public void showSettingsAlet() {
         AlertDialog.Builder alertDialouge = new AlertDialog.Builder(context);
 
         alertDialouge.setTitle("Enable Location Services");
@@ -119,7 +119,7 @@ public class GPSTracker extends Service implements LocationListener{
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent (Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 context.startActivity(intent);
             }
         });
