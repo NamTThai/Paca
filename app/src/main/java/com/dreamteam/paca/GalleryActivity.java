@@ -84,15 +84,16 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
                     public void onResponse(JSONArray response) {
                         fetchImage(response);
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                new AlertDialog.Builder(GalleryActivity.this)
-                        .setMessage(R.string.cant_contact_server)
-                        .create()
-                        .show();
-            }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        new AlertDialog.Builder(GalleryActivity.this)
+                                .setMessage(R.string.cant_contact_server)
+                                .create()
+                                .show();
+                    }
+                });
         jsonArrayRequest.setTag(TAG);
         getRequestQueue().add(jsonArrayRequest);
     }
