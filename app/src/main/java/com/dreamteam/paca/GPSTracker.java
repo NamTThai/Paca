@@ -20,9 +20,9 @@ public class GPSTracker extends Service implements LocationListener {
 
     private final Context context;
 
-    boolean isGPSEnabled = false;
-    boolean isNetworkEnabled = false;
-    boolean canGetLocation = false;
+    boolean isGPSEnabled;
+    boolean isNetworkEnabled;
+    boolean canGetLocation;
 
     Location location;
 
@@ -109,13 +109,13 @@ public class GPSTracker extends Service implements LocationListener {
     }
 
     public void showSettingsAlert() {
-        AlertDialog.Builder alertDialouge = new AlertDialog.Builder(context);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
-        alertDialouge.setTitle("Enable Location Services");
+        alertDialog.setTitle("Enable Location Services");
 
-        alertDialouge.setMessage("Location services must be enabled to post and read local Paca Posts. Would you like to enable it now?");
+        alertDialog.setMessage("Location services must be enabled to post and read local Paca Posts. Would you like to enable it now?");
 
-        alertDialouge.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -124,14 +124,14 @@ public class GPSTracker extends Service implements LocationListener {
             }
         });
 
-        alertDialouge.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }
         });
 
-        alertDialouge.show();
+        alertDialog.show();
     }
 
     @Override
