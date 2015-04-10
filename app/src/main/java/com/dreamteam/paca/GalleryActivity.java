@@ -146,7 +146,7 @@ public class GalleryActivity extends ActionBarActivity {
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
         } else {
-            gps.showSettingsAlet();
+            gps.showSettingsAlert();
         }
     }
 }

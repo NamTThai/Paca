@@ -46,7 +46,7 @@ public class GPSTracker extends Service implements LocationListener {
             isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
             if (!isGPSEnabled && !isNetworkEnabled) {
-                showSettingsAlet();
+                showSettingsAlert();
             } else {
                 this.canGetLocation = true;
 
@@ -108,7 +108,7 @@ public class GPSTracker extends Service implements LocationListener {
         return this.canGetLocation;
     }
 
-    public void showSettingsAlet() {
+    public void showSettingsAlert() {
         AlertDialog.Builder alertDialouge = new AlertDialog.Builder(context);
 
         alertDialouge.setTitle("Enable Location Services");
