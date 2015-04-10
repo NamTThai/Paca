@@ -8,7 +8,7 @@
           android:icon="@drawable/ic_action_upload"
           app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_OpenCamera"
+    <item android:id="@+id/action_open_camera"
         android:title="@string/action_OpenCamera"
         android:icon="@drawable/abc_ic_commit_search_api_mtrl_alpha"
         app:showAsAction="ifRoom"/>

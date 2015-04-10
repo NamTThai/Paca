@@ -3,6 +3,7 @@ package com.dreamteam.paca;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
@@ -22,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -29,9 +31,10 @@ import java.util.ArrayList;
 public class GalleryActivity extends ActionBarActivity {
     public static final String TAG = GalleryActivity.class.getName();
     private static final int CAMERA_REQUEST = 1313;
-    private GPSTracker gps;
 
-    private final static String mGetPictureAddressesUri = "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php";
+    private static final String GET_PICTURE_ADDRESS_URI = "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php";
+    private static final String LONGITUDE = "longitude";
+    private static final String LATITUDE = "latitude";
 
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
@@ -58,7 +61,7 @@ public class GalleryActivity extends ActionBarActivity {
                     }
                 });
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, mGetPictureAddressesUri,
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GET_PICTURE_ADDRESS_URI,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -75,6 +78,8 @@ public class GalleryActivity extends ActionBarActivity {
         });
         jsonArrayRequest.setTag(TAG);
         mRequestQueue.add(jsonArrayRequest);
+
+        fetchLocationToSendToServer();
     }
 
 
@@ -95,7 +100,7 @@ public class GalleryActivity extends ActionBarActivity {
                         .create()
                         .show();
                 return true;
-            case R.id.action_OpenCamera:
+            case R.id.action_open_camera:
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(cameraIntent, CAMERA_REQUEST);
@@ -139,14 +144,20 @@ public class GalleryActivity extends ActionBarActivity {
         imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
     }
 
-    public void gpsGetter() {
-        gps = new GPSTracker(GalleryActivity.this);
+    public JSONObject fetchLocationToSendToServer() {
+        GPSTracker gpsTracker = new GPSTracker(this);
+        Location location = gpsTracker.getLocation();
+        JSONObject request = new JSONObject();
 
-        if (gps.canGetLocation()) {
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
-        } else {
-            gps.showSettingsAlert();
+        try {
+            if (location != null) {
+                request.put(LONGITUDE, location.getLongitude());
+                request.put(LATITUDE, location.getLatitude());
+            }
+        } catch (JSONException e) {
+            gpsTracker.showSettingsAlert(this);
         }
+
+        return request;
     }
 }
