@@ -9,4 +9,11 @@
     <string name="action_OpenCamera">OpenCamera</string>
     <string name="title_activity_camera">CameraActivity</string>
 
+    <string name="cant_contact_server">Fail to contact server</string>
+
+    <string name="enable_gps">Enable Location Services</string>
+    <string name="enable_gps_message">Location services must be enabled to post and read local Paca Posts. Would you like to enable it now?</string>
+    <string name="button_positive">Yes</string>
+    <string name="button_negative">No</string>
+
 </resources>
