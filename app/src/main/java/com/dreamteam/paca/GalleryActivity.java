@@ -88,7 +88,7 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        new AlertDialog.Builder(GalleryActivity.this)
+                        new AlertDialog.Builder(GalleryActigfdsklgmfdsklkfdlsvity.this)
                                 .setMessage(R.string.cant_contact_server)
                                 .create()
                                 .show();
