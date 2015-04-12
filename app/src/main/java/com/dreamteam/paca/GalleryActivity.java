@@ -164,11 +164,11 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
     }
 
     @Override
-    @TargetApi(11)
+    //@TargetApi(11)
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_gallery_host, menu);
-        inboxMenuItem = menu.findItem(R.id.action_open_camera);
-        inboxMenuItem.setActionView(R.layout.menu_item_view);
+        //inboxMenuItem = menu.findItem(R.id.action_open_camera);
+        //inboxMenuItem.setActionView(R.layout.menu_item_view);
         return true;
     }
 

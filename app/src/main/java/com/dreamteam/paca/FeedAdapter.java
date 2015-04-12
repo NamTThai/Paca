@@ -12,11 +12,9 @@ import android.widget.ImageView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-;
-
 /**
  * Created by Dan Flanagan
- */
+*/
 public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ANIMATED_ITEMS_COUNT = 2;
 
@@ -41,7 +39,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         if (position > lastAnimatedPosition) {
             lastAnimatedPosition = position;
-            view.setTranslationY(Utils.getScreenHeight(context));
+            view.setTranslationY(view.getHeight());
             view.animate()
                     .translationY(0)
                     .setInterpolator(new DecelerateInterpolator(3.f))
@@ -69,7 +67,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
-        @InjectView(R.id.ivFeedCenter)
+        //@InjectView(R.id.ivFeedCenter)
         SquaredImageView ivFeedCenter;
         @InjectView(R.id.ivFeedBottom)
         ImageView ivFeedBottom;
