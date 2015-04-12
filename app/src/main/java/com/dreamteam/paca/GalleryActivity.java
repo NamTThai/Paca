@@ -171,7 +171,8 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
                 mResolvingError = false;
                 break;
             case REQUEST_TAKE_PHOTO:
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                sendPhoto(null);
+                /*Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
                     try {
                         sendPhoto(bitmap);
@@ -179,7 +180,7 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                }
+                }*/
                 break;
         }
     }
