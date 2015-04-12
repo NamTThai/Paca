@@ -8,5 +8,7 @@
     <string name="action_TakePic">TakePic</string>
     <string name="action_OpenCamera">OpenCamera</string>
     <string name="title_activity_camera">CameraActivity</string>
+    <string name="uploaded">The Picture has been uploaded!</string>
+
 
 </resources>
