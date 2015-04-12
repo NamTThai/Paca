@@ -6,10 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -20,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,20 +31,14 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class GalleryActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -180,7 +171,6 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
                 mResolvingError = false;
                 break;
             case REQUEST_TAKE_PHOTO:
-                setPic();
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
                     try {
@@ -208,7 +198,7 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
             case R.id.action_open_camera:
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(cameraIntent, REQUEST_CAMERA);
+                    dispatchTakePictureIntent();
                 }
                 return true;
             default:
@@ -323,52 +313,16 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
             dir.mkdir();
 
         File image = new File(storageDir + "/" + imageFileName + ".jpg");
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        Log.i(TAG, "photo path = " + mCurrentPhotoPath);
         return image;
     }
 
-    private void setPic() {
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
-
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor << 1;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
-        Matrix mtx = new Matrix();
-        mtx.postRotate(90);
-        // Rotating Bitmap
-        Bitmap rotatedBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
-
-        if (rotatedBMP != bitmap)
-            bitmap.recycle();
-
-        mImageView.setImageBitmap(rotatedBMP);
-
-        try {
-            sendPhoto(rotatedBMP);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void sendPhoto(Bitmap bitmap) {
+        new AlertDialog.Builder(this)
+                .setMessage("Uploaded successfully")
+                .create()
+                .show();
     }
+/*
     private void sendPhoto(Bitmap bitmap) throws Exception {
         new UploadTask().execute(bitmap);
     }
@@ -450,4 +404,5 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
             Toast.makeText(GalleryActivity.this, R.string.action_Upload, Toast.LENGTH_LONG).show();
         }
     }
+    */
 }
