@@ -75,6 +75,8 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_host);
 
+        this.getSupportActionBar().setElevation(0);
+
         mRequestQueue = getRequestQueue();
         mImageLoader = getImageLoader();
         mGoogleApiClient = getGoogleApiClient();

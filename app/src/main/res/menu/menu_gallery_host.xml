@@ -1,10 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".GalleryHost">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".GalleryHost">
 
     <item android:id="@+id/action_open_camera"
         android:title="@string/action_OpenCamera"
-        android:icon="@drawable/ic_action_upload"
+        android:icon="@drawable/camera"
         app:showAsAction="ifRoom"/>
 </menu>
