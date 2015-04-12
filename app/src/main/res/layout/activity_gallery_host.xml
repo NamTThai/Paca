@@ -1,6 +1,21 @@
-<ListView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_gallery"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-/>
+    android:paddingBottom="20dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="20dp"
+    android:background="@drawable/bg"
+    tools:context=".GalleryActivity">
+
+    <ListView
+        android:id="@+id/main_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10.0sp">
+    </ListView>
+
+
+</RelativeLayout>

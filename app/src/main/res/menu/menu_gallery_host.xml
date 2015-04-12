@@ -1,15 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".GalleryHost">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".GalleryHost">
 
     <item android:id="@+id/action_upload"
-          android:title="@string/action_Upload"
-          android:icon="@drawable/ic_action_upload"
-          app:showAsAction="ifRoom"/>
+        android:title="@string/action_Upload"
+        android:icon="@drawable/upload"
+        app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_open_camera"
+    <item android:id="@+id/action_OpenCamera"
         android:title="@string/action_OpenCamera"
-        android:icon="@drawable/abc_ic_commit_search_api_mtrl_alpha"
+        android:icon="@drawable/camera"
         app:showAsAction="ifRoom"/>
 </menu>

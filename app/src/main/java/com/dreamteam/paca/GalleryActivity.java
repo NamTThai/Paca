@@ -59,6 +59,8 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_host);
 
+        this.getSupportActionBar().setElevation(0);
+
         mRequestQueue = getRequestQueue();
         mImageLoader = getImageLoader();
         mGoogleApiClient = getGoogleApiClient();
@@ -178,7 +180,7 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
                         .create()
                         .show();
                 return true;
-            case R.id.action_open_camera:
+            case R.id.action_OpenCamera:
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (cameraIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(cameraIntent, CAMERA_REQUEST);
