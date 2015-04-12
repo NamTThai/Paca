@@ -1,5 +1,6 @@
 package com.dreamteam.paca;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -53,6 +54,8 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
     private boolean mResolvingError;
+
+    private MenuItem inboxMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,8 +164,11 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
     }
 
     @Override
+    @TargetApi(11)
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_gallery_host, menu);
+        inboxMenuItem = menu.findItem(R.id.action_open_camera);
+        inboxMenuItem.setActionView(R.layout.menu_item_view);
         return true;
     }
 
@@ -237,8 +243,8 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
             Log.e(TAG, JSONException.class.getName(), e);
         }
 
-        ListView imageStream = (ListView) findViewById(R.id.main_gallery);
-        imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
+        //ListView imageStream = (ListView) findViewById(R.id.main_gallery);
+        //imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
     }
 
     public void showSettingsAlert() {
