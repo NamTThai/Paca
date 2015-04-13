@@ -36,7 +36,7 @@ public class BaseActivity extends ActionBarActivity implements GlobalMenuView.On
         ButterKnife.inject(this);
         setupToolbar();
         if (shouldInstallDrawer()) {
-            setupDrawer();
+            //setupDrawer();
         }
     }
 
