@@ -30,27 +30,27 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
 
-            <!--View
+            <View
                 android:id="@+id/vBgLike"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_like_circle_background"
-                android:visibility="gone" /-->
+                android:visibility="gone" />
 
-            <!--ImageView
+            <ImageView
                 android:id="@+id/ivLike"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="center"
                 android:src="@drawable/ic_heart_outline_white"
-                android:visibility="gone" /-->
+                android:visibility="gone"/>
 
         </com.dreamteam.paca.SquaredFrameLayout>
 
-        <!--ImageView
+        <ImageView
             android:id="@+id/ivFeedBottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" /-->
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,14 +58,14 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp">
 
-            <!--ImageButton
+            <ImageButton
                 android:id="@+id/btnLike"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_heart_outline_grey" />
 
-            <ImageButton
+            <!--ImageButton
                 android:id="@+id/btnComments"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -85,7 +85,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical|right">
 
-                <!--ImageView
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_heart_small_blue" />
@@ -109,7 +109,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_like_counter" />
-                </TextSwitcher-->
+                </TextSwitcher>
             </LinearLayout>
         </LinearLayout>
 

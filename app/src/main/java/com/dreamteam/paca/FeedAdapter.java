@@ -65,11 +65,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         final View view = LayoutInflater.from(context).inflate(R.layout.item_feed, parent, false);
         final CellFeedViewHolder cellFeedViewHolder = new CellFeedViewHolder(view);
         if (viewType == VIEW_TYPE_DEFAULT) {
-            /*cellFeedViewHolder.btnComments.setOnClickListener(this);
-            cellFeedViewHolder.btnMore.setOnClickListener(this);
-            cellFeedViewHolder.ivFeedCenter.setOnClickListener(this);
+            //cellFeedViewHolder.btnComments.setOnClickListener(this);
+            //cellFeedViewHolder.btnMore.setOnClickListener(this);
+            //cellFeedViewHolder.ivFeedCenter.setOnClickListener(this);
             cellFeedViewHolder.btnLike.setOnClickListener(this);
-            cellFeedViewHolder.ivUserProfile.setOnClickListener(this);*/
+            //cellFeedViewHolder.ivUserProfile.setOnClickListener(this);
         } else if (viewType == VIEW_TYPE_LOADER) {
             View bgView = new View(context);
             bgView.setLayoutParams(new FrameLayout.LayoutParams(
@@ -126,13 +126,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_2);
             //holder.ivFeedBottom.setImageResource(R.drawable.img_feed_bottom_2);
         }
-        /*updateLikesCounter(holder, false);
-        updateHeartButton(holder, false);
+        updateLikesCounter(holder, false);
+        //updateHeartButton(holder, false);
 
-        holder.btnComments.setTag(position);
-        holder.btnMore.setTag(position);
-        holder.ivFeedCenter.setTag(holder);
-        holder.btnLike.setTag(holder);*/
+        //holder.btnComments.setTag(position);
+        //holder.btnMore.setTag(position);
+        //holder.ivFeedCenter.setTag(holder);
+        holder.btnLike.setTag(holder);
 
         //if (likeAnimations.containsKey(holder)) {
          //   likeAnimations.get(holder).cancel();
@@ -186,7 +186,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         return itemsCount;
     }
 
-    /*private void updateLikesCounter(CellFeedViewHolder holder, boolean animated) {
+    private void updateLikesCounter(CellFeedViewHolder holder, boolean animated) {
         int currentLikesCount = likesCount.get(holder.getPosition()) + 1;
         String likesCountText = context.getResources().getQuantityString(
                 R.plurals.likes_count, currentLikesCount, currentLikesCount
@@ -199,7 +199,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
 
         likesCount.put(holder.getPosition(), currentLikesCount);
-    }*/
+    }
 
     /*private void updateHeartButton(final CellFeedViewHolder holder, boolean animated) {
         if (animated) {
@@ -245,25 +245,26 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             }
         }
     }*/
-    /*
+
     @Override
     public void onClick(View view) {
         final int viewId = view.getId();
-        if (viewId == R.id.btnComments) {
+        /*if (viewId == R.id.btnComments) {
             if (onFeedItemClickListener != null) {
                 onFeedItemClickListener.onCommentsClick(view, (Integer) view.getTag());
             }
         } else if (viewId == R.id.btnMore) {
             if (onFeedItemClickListener != null) {
                 onFeedItemClickListener.onMoreClick(view, (Integer) view.getTag());
-            }
-        } else if (viewId == R.id.btnLike) {
+            }*/
+        if (viewId == R.id.btnLike) {
             CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
             if (!likedPositions.contains(holder.getPosition())) {
                 likedPositions.add(holder.getPosition());
-                //updateLikesCounter(holder, true);
+                updateLikesCounter(holder, true);
                 //updateHeartButton(holder, true);
             }
+        }/*
         } else if (viewId == R.id.ivFeedCenter) {
             CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
             if (!likedPositions.contains(holder.getPosition())) {
@@ -276,8 +277,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             if (onFeedItemClickListener != null) {
                 onFeedItemClickListener.onProfileClick(view);
             }
-        }
-    }*/
+        }*/
+    }
 
     /*private void animatePhotoLike(final CellFeedViewHolder holder) {
         if (!likeAnimations.containsKey(holder)) {
@@ -359,10 +360,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         notifyItemChanged(0);
     }
 
-    @Override
+    /*@Override
     public void onClick(View v) {
 
-    }
+    }*/
 
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.ivFeedCenter)
@@ -370,17 +371,17 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         /*@InjectView(R.id.ivFeedBottom)
         ImageView ivFeedBottom;
         @InjectView(R.id.btnComments)
-        ImageButton btnComments;
+        ImageButton btnComments;*/
         @InjectView(R.id.btnLike)
         ImageButton btnLike;
-        @InjectView(R.id.btnMore)
-        ImageButton btnMore;
+        //@InjectView(R.id.btnMore)
+        //ImageButton btnMore;
         @InjectView(R.id.vBgLike)
         View vBgLike;
         @InjectView(R.id.ivLike)
         ImageView ivLike;
         @InjectView(R.id.tsLikesCounter)
-        TextSwitcher tsLikesCounter;
+        TextSwitcher tsLikesCounter;/*
         @InjectView(R.id.ivUserProfile)
         ImageView ivUserProfile;
         @InjectView(R.id.vImageRoot)
