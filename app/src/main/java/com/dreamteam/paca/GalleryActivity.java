@@ -106,6 +106,12 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         } else {
             feedAdapter.updateItems(false);
         }
+
+
+
+        //if (savedInstanceState != null) {
+        //    mResolvingError = savedInstanceState.getBoolean(RESOLVING_ERROR, false);
+        //}
     }
 
     private void setupFeed() {
@@ -305,6 +311,22 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         feedAdapter.updateItems(true);
     }
 
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_open_camera:
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                    dispatchTakePictureIntent();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
+
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(this);
@@ -422,6 +444,16 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 .show();
     }
 
+    /*@Override
+    public void onCommentsClick(View v, int position) {
+        final Intent intent = new Intent(this, CommentsActivity.class);
+        int[] startingLocation = new int[2];
+        v.getLocationOnScreen(startingLocation);
+        intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }*/
+
     @Override
     public void onCommentsClick(View v, int position) {
 
@@ -436,6 +468,15 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     public void onProfileClick(View v) {
 
     }
+
+    /*@Override
+    public void onProfileClick(View v) {
+        int[] startingLocation = new int[2];
+        v.getLocationOnScreen(startingLocation);
+        startingLocation[0] += v.getWidth() / 2;
+        UserProfileActivity.startUserProfileFromLocation(startingLocation, this);
+        overridePendingTransition(0, 0);
+    }*/
 
     @Override
     public void onReportClick(int feedItem) {
