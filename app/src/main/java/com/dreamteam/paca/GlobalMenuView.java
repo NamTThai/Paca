@@ -70,6 +70,6 @@ public class GlobalMenuView extends ListView implements View.OnClickListener {
     }
 
     public void setOnHeaderClickListener(OnHeaderClickListener onHeaderClickListener) {
-        this.onHeaderClickListener = onHeaderClickListener;
+        //this.onHeaderClickListener = onHeaderClickListener;
     }
 }
