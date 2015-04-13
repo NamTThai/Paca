@@ -22,7 +22,7 @@ public class GlobalMenuView extends ListView implements View.OnClickListener {
 
     public GlobalMenuView(Context context) {
         super(context);
-        init();
+        //init();
     }
 
     private void init() {
@@ -60,13 +60,13 @@ public class GlobalMenuView extends ListView implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (onHeaderClickListener != null) {
+        /*if (onHeaderClickListener != null) {
             onHeaderClickListener.onGlobalMenuHeaderClick(v);
-        }
+        }*/
     }
 
     public interface OnHeaderClickListener {
-        public void onGlobalMenuHeaderClick(View v);
+        //public void onGlobalMenuHeaderClick(View v);
     }
 
     public void setOnHeaderClickListener(OnHeaderClickListener onHeaderClickListener) {

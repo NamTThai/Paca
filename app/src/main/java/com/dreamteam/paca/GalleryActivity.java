@@ -444,7 +444,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 .show();
     }
 
-    @Override
+    /*@Override
     public void onCommentsClick(View v, int position) {
         final Intent intent = new Intent(this, CommentsActivity.class);
         int[] startingLocation = new int[2];
@@ -452,6 +452,11 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
         startActivity(intent);
         overridePendingTransition(0, 0);
+    }*/
+
+    @Override
+    public void onCommentsClick(View v, int position) {
+
     }
 
     @Override
@@ -461,12 +466,17 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     public void onProfileClick(View v) {
+
+    }
+
+    /*@Override
+    public void onProfileClick(View v) {
         int[] startingLocation = new int[2];
         v.getLocationOnScreen(startingLocation);
         startingLocation[0] += v.getWidth() / 2;
         UserProfileActivity.startUserProfileFromLocation(startingLocation, this);
         overridePendingTransition(0, 0);
-    }
+    }*/
 
     @Override
     public void onReportClick(int feedItem) {
@@ -493,8 +503,14 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         int[] startingLocation = new int[2];
         btnCreate.getLocationOnScreen(startingLocation);
         startingLocation[0] += btnCreate.getWidth() / 2;
-        TakePhotoActivity.startCameraFromLocation(startingLocation, this);
-        overridePendingTransition(0, 0);
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            dispatchTakePictureIntent();
+        }
+
+        //TakePhotoActivity.startCameraFromLocation(startingLocation, this);
+        //overridePendingTransition(0, 0);
     }
 /*
     private void sendPhoto(Bitmap bitmap) throws Exception {

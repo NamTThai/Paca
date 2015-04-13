@@ -83,9 +83,9 @@ public class BaseActivity extends ActionBarActivity implements GlobalMenuView.On
         return ivLogo;
     }
 
-    @Override
+    //@Override
     public void onGlobalMenuHeaderClick(final View v) {
-        drawerLayout.closeDrawer(Gravity.START);
+        /*drawerLayout.closeDrawer(Gravity.START);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -95,6 +95,6 @@ public class BaseActivity extends ActionBarActivity implements GlobalMenuView.On
                 UserProfileActivity.startUserProfileFromLocation(startingLocation, BaseActivity.this);
                 overridePendingTransition(0, 0);
             }
-        }, 200);
+        }, 200);*/
     }
 }
