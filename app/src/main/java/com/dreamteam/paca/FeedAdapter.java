@@ -118,6 +118,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
     }
 
+    //TODO:
+    // In this code we have to implement setting the images to the ones received from the server
+
     private void bindDefaultFeedItem(int position, CellFeedViewHolder holder) {
         if (position % 2 == 0) {
             holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_1);
