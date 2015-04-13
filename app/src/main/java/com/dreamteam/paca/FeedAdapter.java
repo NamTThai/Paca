@@ -76,14 +76,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             ));
             bgView.setBackgroundColor(0x77ffffff);
-           // cellFeedViewHolder.vImageRoot.addView(bgView);
+            cellFeedViewHolder.vImageRoot.addView(bgView);
             cellFeedViewHolder.vProgressBg = bgView;
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(loadingViewSize, loadingViewSize);
             params.gravity = Gravity.CENTER;
             SendingProgressView sendingProgressView = new SendingProgressView(context);
             sendingProgressView.setLayoutParams(params);
-            //cellFeedViewHolder.vImageRoot.addView(sendingProgressView);
+            cellFeedViewHolder.vImageRoot.addView(sendingProgressView);
             cellFeedViewHolder.vSendingProgress = sendingProgressView;
         }
 
@@ -127,17 +127,17 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             //holder.ivFeedBottom.setImageResource(R.drawable.img_feed_bottom_2);
         }
         updateLikesCounter(holder, false);
-        //updateHeartButton(holder, false);
+        updateHeartButton(holder, false);
 
         //holder.btnComments.setTag(position);
         //holder.btnMore.setTag(position);
-        //holder.ivFeedCenter.setTag(holder);
+        holder.ivFeedCenter.setTag(holder);
         holder.btnLike.setTag(holder);
 
-        //if (likeAnimations.containsKey(holder)) {
-         //   likeAnimations.get(holder).cancel();
-        //}
-        //resetLikeAnimationState(holder);
+        if (likeAnimations.containsKey(holder)) {
+           likeAnimations.get(holder).cancel();
+        }
+        resetLikeAnimationState(holder);
     }
 
     private void bindLoadingFeedItem(final CellFeedViewHolder holder) {
@@ -201,7 +201,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         likesCount.put(holder.getPosition(), currentLikesCount);
     }
 
-    /*private void updateHeartButton(final CellFeedViewHolder holder, boolean animated) {
+    private void updateHeartButton(final CellFeedViewHolder holder, boolean animated) {
         if (animated) {
             if (!likeAnimations.containsKey(holder)) {
                 AnimatorSet animatorSet = new AnimatorSet();
@@ -244,7 +244,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 holder.btnLike.setImageResource(R.drawable.ic_heart_outline_grey);
             }
         }
-    }*/
+    }
 
     @Override
     public void onClick(View view) {
@@ -264,16 +264,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                 updateLikesCounter(holder, true);
                 //updateHeartButton(holder, true);
             }
-        }/*
+        //}
         } else if (viewId == R.id.ivFeedCenter) {
             CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
             if (!likedPositions.contains(holder.getPosition())) {
                 likedPositions.add(holder.getPosition());
-                //updateLikesCounter(holder, true);
+                updateLikesCounter(holder, true);
                 //animatePhotoLike(holder);
-                //updateHeartButton(holder, false);
+                updateHeartButton(holder, false);
             }
-        } else if (viewId == R.id.ivUserProfile) {
+        } /*else if (viewId == R.id.ivUserProfile) {
             if (onFeedItemClickListener != null) {
                 onFeedItemClickListener.onProfileClick(view);
             }
@@ -330,26 +330,26 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             });
             animatorSet.start();
         }
-    }
+    }*/
 
     private void resetLikeAnimationState(CellFeedViewHolder holder) {
         likeAnimations.remove(holder);
         holder.vBgLike.setVisibility(View.GONE);
         holder.ivLike.setVisibility(View.GONE);
-    }*/
+    }
 
     public void updateItems(boolean animated) {
         itemsCount = 10;
         animateItems = animated;
-        //fillLikesWithRandomValues();
+        fillLikesWithRandomValues();
         notifyDataSetChanged();
     }
 
-    /*private void fillLikesWithRandomValues() {
+    private void fillLikesWithRandomValues() {
         for (int i = 0; i < getItemCount(); i++) {
             likesCount.put(i, new Random().nextInt(100));
         }
-    }*/
+    }
 
     public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
         this.onFeedItemClickListener = onFeedItemClickListener;
@@ -368,10 +368,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.ivFeedCenter)
         ImageView ivFeedCenter;
-        /*@InjectView(R.id.ivFeedBottom)
+        @InjectView(R.id.ivFeedBottom)
         ImageView ivFeedBottom;
-        @InjectView(R.id.btnComments)
-        ImageButton btnComments;*/
+        //@InjectView(R.id.btnComments)
+        //ImageButton btnComments;
         @InjectView(R.id.btnLike)
         ImageButton btnLike;
         //@InjectView(R.id.btnMore)
@@ -381,11 +381,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         @InjectView(R.id.ivLike)
         ImageView ivLike;
         @InjectView(R.id.tsLikesCounter)
-        TextSwitcher tsLikesCounter;/*
-        @InjectView(R.id.ivUserProfile)
-        ImageView ivUserProfile;
+        TextSwitcher tsLikesCounter;
+        //@InjectView(R.id.ivUserProfile)
+        //ImageView ivUserProfile;
         @InjectView(R.id.vImageRoot)
-        FrameLayout vImageRoot;*/
+        FrameLayout vImageRoot;
 
         SendingProgressView vSendingProgress;
         View vProgressBg;
