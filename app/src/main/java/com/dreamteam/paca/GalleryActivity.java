@@ -311,7 +311,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         feedAdapter.updateItems(true);
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -325,7 +325,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
@@ -376,8 +376,8 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
             Log.e(TAG, JSONException.class.getName(), e);
         }
 
-        ListView imageStream = (ListView) findViewById(R.id.main_gallery);
-        imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
+        //ListView imageStream = (ListView) findViewById(R.id.main_gallery);
+        //imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
     }
 
     public void showSettingsAlert() {

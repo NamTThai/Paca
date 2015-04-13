@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">paca</string>
+    <string name="app_name">pic pac</string>
     <plurals name="likes_count">
     <item quantity="one">%d like</item>
     <item quantity="other">%d likes</item>
-        <string name="title">PicPac</string>
+
 </plurals>
     <string-array name="user_photos">
         <item>http://scontent-a-fra.cdninstagram.com/hphotos-xpf1/t51.2885-15/s306x306/e15/10665483_429615813855717_1490926670_n.jpg</item>
@@ -31,5 +31,18 @@
         <item>http://scontent-b-fra.cdninstagram.com/hphotos-xaf1/t51.2885-15/s306x306/e15/10899087_405295322969722_20422376_n.jpg</item>
     </string-array>
     <string name="user_profile_photo">http://igcdn-photos-f-a.akamaihd.net/hphotos-ak-xpa1/t51.2885-19/929118_455075441302693_1605108410_a.jpg</string>
-    <string name="action_settings">description</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_Upload">Upload</string>
+    <string name="action_TakePic">TakePic</string>
+    <string name="action_OpenCamera">OpenCamera</string>
+    <string name="title_activity_camera">CameraActivity</string>
+
+    <string name="cant_contact_server">Fail to contact server</string>
+
+    <string name="enable_gps">Enable Location Services</string>
+    <string name="enable_gps_message">Location services must be enabled to post and read local Paca Posts. Would you like to enable it now?</string>
+    <string name="button_positive">Yes</string>
+    <string name="button_negative">No</string>
 </resources>
