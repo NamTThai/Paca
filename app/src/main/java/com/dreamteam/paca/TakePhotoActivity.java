@@ -12,9 +12,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -230,12 +232,13 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         // setPreviewSize: requested preview size 1920 x 1080 (camera id 0)
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Camera.Size cs = sizes.get(0);
+            //List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            //Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             //Can I hardcode this?
-            parameters1.setPreviewSize(540,540);
-            //previewSize = parameters1.getPreviewSize();
+            parameters1.setPreviewSize(640,480);
+            previewSize = parameters1.getPreviewSize();
+            Log.d("preview size:", previewSize.toString());
             //return parameters1;
             //*/
             //previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
@@ -248,19 +251,23 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
 
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            Object[] sizeList = sizes.toArray();
+            for(int i = 0; i < sizeList.length - 1; i++) {
+                Log.d("myTag", sizeList[i].toString());
+            }
             Camera.Size cs = sizes.get(0);
-            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            parameters1.setPreviewSize(cs.width,cs.height);
+            //Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            //parameters1.setPreviewSize(cs.width,cs.height);
             //previewSize = parameters1.getPreviewSize();
             //return parameters1;
             //*/
-            previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
-            return parameters1;
-            /*
+            //previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
+            //return parameters1;
+
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
             return parameters1;
-            //*/
+            //
         }
 
         @Override
