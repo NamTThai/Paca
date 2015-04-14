@@ -40,7 +40,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
- * Created by Miroslaw Stanek on 08.02.15. Edited by Dan Flanagan
+ * Created by Miroslaw Stanek on 08.02.15.
  */
 public class TakePhotoActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener,
         CameraHostProvider {
@@ -227,19 +227,8 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             return true;
         }
 
-        // setPreviewSize: requested preview size 1920 x 1080 (camera id 0)
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Camera.Size cs = sizes.get(0);
-            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            //Can I hardcode this?
-            parameters1.setPreviewSize(540,540);
-            //previewSize = parameters1.getPreviewSize();
-            //return parameters1;
-            //*/
-            //previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
-
             //previewSize = CameraUtils.getLargestPictureSize(mHost, parameters);List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             return previewSize;
         }
@@ -251,11 +240,9 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             parameters1.setPreviewSize(cs.width,cs.height);
-            //previewSize = parameters1.getPreviewSize();
-            //return parameters1;
-            //*/
-            previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
+            previewSize = parameters1.getPreviewSize();
             return parameters1;
+            //*/
             /*
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
