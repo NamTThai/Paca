@@ -9,7 +9,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,14 +23,18 @@ import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
+import android.hardware.Camera;
+import android.hardware.camera2.*;
 
 import com.commonsware.cwac.camera.CameraHost;
 import com.commonsware.cwac.camera.CameraHostProvider;
+import com.commonsware.cwac.camera.CameraUtils;
 import com.commonsware.cwac.camera.CameraView;
 import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -70,6 +73,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
     private boolean pendingIntro;
     private int currentState;
+    private CameraHost mHost;
 
     private File photoPath;
 
@@ -225,15 +229,25 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            //parameters = mCamera.getParameters();
+            //previewSize = CameraUtils.getLargestPictureSize(mHost, parameters);
             return previewSize;
         }
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
+            
+            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            Camera.Size cs = sizes.get(0);
+            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            parameters1.setPreviewSize(cs.width,cs.height);
+            previewSize = parameters1.getPreviewSize();
+            return parameters1;
+            //*/
+            /*
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
             return parameters1;
+            //*/
         }
 
         @Override
