@@ -227,10 +227,9 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             return true;
         }
 
-        // setPreviewSize: requested preview size 1920 x 1080 (camera id 0)
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            /*List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             //Can I hardcode this?
@@ -247,20 +246,20 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
 
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Camera.Size cs = sizes.get(0);
-            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            parameters1.setPreviewSize(cs.width,cs.height);
+            //List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            //Camera.Size cs = sizes.get(0);
+            //Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            //parameters1.setPreviewSize(cs.width,cs.height);
             //previewSize = parameters1.getPreviewSize();
             //return parameters1;
-            //*/
-            previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
+            //
+            //previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
             return parameters1;
             /*
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
             return parameters1;
-            //*/
+            */
         }
 
         @Override
