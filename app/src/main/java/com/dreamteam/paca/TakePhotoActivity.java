@@ -229,13 +229,13 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            //previewSize = CameraUtils.getLargestPictureSize(mHost, parameters);
+            //previewSize = CameraUtils.getLargestPictureSize(mHost, parameters);List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             return previewSize;
         }
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
-            
+
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
