@@ -47,6 +47,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final int STATE_TAKE_PHOTO = 0;
     private static final int STATE_SETUP_PHOTO = 1;
+    //private Camera mCamera;
 
     @InjectView(R.id.vRevealBackground)
     RevealBackgroundView vRevealBackground;
@@ -224,6 +225,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
+            //parameters = mCamera.getParameters();
             return previewSize;
         }
 

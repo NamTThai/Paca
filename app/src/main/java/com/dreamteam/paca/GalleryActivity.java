@@ -508,13 +508,13 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         //edit the camera activity that was imported in with the open source project
         //ensure the the camera only takes a 540x540 picture
 
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        /*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
             dispatchTakePictureIntent();
-        }
+        }*/
 
-        //TakePhotoActivity.startCameraFromLocation(startingLocation, this);
-        //overridePendingTransition(0, 0);
+        TakePhotoActivity.startCameraFromLocation(startingLocation, this);
+        overridePendingTransition(0, 0);
     }
 /*
     private void sendPhoto(Bitmap bitmap) throws Exception {
