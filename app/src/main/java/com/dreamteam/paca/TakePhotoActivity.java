@@ -238,7 +238,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             //Can I hardcode this?
             parameters1.setPreviewSize(640,480);
             previewSize = parameters1.getPreviewSize();
-            Log.d("preview size:", previewSize.toString());
+            Log.d("myTag preview size:", previewSize.toString());
             //return parameters1;
             //*/
             //previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
@@ -253,7 +253,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             Object[] sizeList = sizes.toArray();
             for(int i = 0; i < sizeList.length - 1; i++) {
-                Log.d("myTag", sizeList[i].toString());
+                Log.d("myTag size list", sizeList[i].toString());
             }
             Camera.Size cs = sizes.get(0);
             //Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
