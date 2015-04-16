@@ -1,5 +1,8 @@
 package com.dreamteam.paca;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -10,13 +13,19 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.util.LruCache;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.OvershootInterpolator;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -40,9 +49,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import butterknife.InjectView;
+import butterknife.OnClick;
 
-public class GalleryActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+
+public class GalleryActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,FeedAdapter.OnFeedItemClickListener,
+        FeedContextMenu.OnFeedContextMenuItemClickListener {
     public static final String TAG = GalleryActivity.class.getName();
     private static final int REQUEST_CAMERA = 0;
     private static final int REQUEST_TAKE_PHOTO = 1;
@@ -61,6 +74,20 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
     private Location mLocation;
     private boolean mResolvingError;
 
+    public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
+
+    private static final int ANIM_DURATION_TOOLBAR = 300;
+    private static final int ANIM_DURATION_FAB = 400;
+
+    @InjectView(R.id.rvFeed)
+    RecyclerView rvFeed;
+    @InjectView(R.id.btnCreate)
+    ImageButton btnCreate;
+
+    private FeedAdapter feedAdapter;
+
+    private boolean pendingIntroAnimation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,9 +99,57 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
         mImageLoader = getImageLoader();
         mGoogleApiClient = getGoogleApiClient();
 
-        if (savedInstanceState != null) {
-            mResolvingError = savedInstanceState.getBoolean(RESOLVING_ERROR, false);
+        setupFeed();
+
+        if (savedInstanceState == null) {
+            pendingIntroAnimation = true;
+        } else {
+            feedAdapter.updateItems(false);
         }
+
+
+
+        //if (savedInstanceState != null) {
+        //    mResolvingError = savedInstanceState.getBoolean(RESOLVING_ERROR, false);
+        //}
+    }
+
+    private void setupFeed() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
+            @Override
+            protected int getExtraLayoutSpace(RecyclerView.State state) {
+                return 300;
+            }
+        };
+        rvFeed.setLayoutManager(linearLayoutManager);
+
+        feedAdapter = new FeedAdapter(this);
+        feedAdapter.setOnFeedItemClickListener(this);
+        rvFeed.setAdapter(feedAdapter);
+        rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
+            }
+        });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (ACTION_SHOW_LOADING_ITEM.equals(intent.getAction())) {
+            showFeedLoadingItemDelayed();
+        }
+    }
+
+    private void showFeedLoadingItemDelayed() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                rvFeed.smoothScrollToPosition(0);
+                feedAdapter.showLoadingView();
+            }
+        }, 500);
     }
 
     @Override
@@ -187,11 +262,56 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_gallery_host, menu);
+        super.onCreateOptionsMenu(menu);
+        if (pendingIntroAnimation) {
+            pendingIntroAnimation = false;
+            startIntroAnimation();
+        }
         return true;
     }
 
-    @Override
+    @TargetApi(14)
+    private void startIntroAnimation() {
+        btnCreate.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.btn_fab_size));
+
+        int actionbarSize = Utils.dpToPx(56);
+        getToolbar().setTranslationY(-actionbarSize);
+        getIvLogo().setTranslationY(-actionbarSize);
+        getInboxMenuItem().getActionView().setTranslationY(-actionbarSize);
+
+        getToolbar().animate()
+                .translationY(0)
+                .setDuration(ANIM_DURATION_TOOLBAR)
+                .setStartDelay(300);
+        getIvLogo().animate()
+                .translationY(0)
+                .setDuration(ANIM_DURATION_TOOLBAR)
+                .setStartDelay(400);
+        getInboxMenuItem().getActionView().animate()
+                .translationY(0)
+                .setDuration(ANIM_DURATION_TOOLBAR)
+                .setStartDelay(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        startContentAnimation();
+                    }
+                })
+                .start();
+    }
+
+    @TargetApi(14)
+    private void startContentAnimation() {
+        btnCreate.animate()
+                .translationY(0)
+                .setInterpolator(new OvershootInterpolator(1.f))
+                .setStartDelay(300)
+                .setDuration(ANIM_DURATION_FAB)
+                .start();
+        feedAdapter.updateItems(true);
+    }
+
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -205,7 +325,7 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
@@ -256,8 +376,8 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
             Log.e(TAG, JSONException.class.getName(), e);
         }
 
-        ListView imageStream = (ListView) findViewById(R.id.main_gallery);
-        imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
+        //ListView imageStream = (ListView) findViewById(R.id.main_gallery);
+        //imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
     }
 
     public void showSettingsAlert() {
@@ -322,6 +442,79 @@ public class GalleryActivity extends ActionBarActivity implements GoogleApiClien
                 .setMessage("Uploaded successfully")
                 .create()
                 .show();
+    }
+
+    /*@Override
+    public void onCommentsClick(View v, int position) {
+        final Intent intent = new Intent(this, CommentsActivity.class);
+        int[] startingLocation = new int[2];
+        v.getLocationOnScreen(startingLocation);
+        intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }*/
+
+    @Override
+    public void onCommentsClick(View v, int position) {
+
+    }
+
+    @Override
+    public void onMoreClick(View v, int itemPosition) {
+        FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, itemPosition, this);
+    }
+
+    @Override
+    public void onProfileClick(View v) {
+
+    }
+
+    /*@Override
+    public void onProfileClick(View v) {
+        int[] startingLocation = new int[2];
+        v.getLocationOnScreen(startingLocation);
+        startingLocation[0] += v.getWidth() / 2;
+        UserProfileActivity.startUserProfileFromLocation(startingLocation, this);
+        overridePendingTransition(0, 0);
+    }*/
+
+    @Override
+    public void onReportClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onSharePhotoClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onCopyShareUrlClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @Override
+    public void onCancelClick(int feedItem) {
+        FeedContextMenuManager.getInstance().hideContextMenu();
+    }
+
+    @OnClick(R.id.btnCreate)
+    public void onTakePhotoClick() {
+        int[] startingLocation = new int[2];
+        btnCreate.getLocationOnScreen(startingLocation);
+        startingLocation[0] += btnCreate.getWidth() / 2;
+
+        //TODO
+        //edit the camera activity that was imported in with the open source project
+        //ensure the the camera only takes a 540x540 picture
+
+        /*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            dispatchTakePictureIntent();
+        }*/
+
+        TakePhotoActivity.startCameraFromLocation(startingLocation, this);
+        overridePendingTransition(0, 0);
     }
 /*
     private void sendPhoto(Bitmap bitmap) throws Exception {
