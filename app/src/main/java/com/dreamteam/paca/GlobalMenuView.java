@@ -9,9 +9,6 @@ import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by Miroslaw Stanek on 30.01.15.
- */
 public class GlobalMenuView extends ListView implements View.OnClickListener {
 
     private OnHeaderClickListener onHeaderClickListener;
@@ -42,7 +39,7 @@ public class GlobalMenuView extends ListView implements View.OnClickListener {
 
     private void setupHeader() {
         this.avatarSize = getResources().getDimensionPixelSize(R.dimen.global_menu_avatar_size);
-        this.profilePhoto = getResources().getString(R.string.user_profile_photo);
+        this.profilePhoto = getResources().getString(R.string.app_name);
 
         setHeaderDividersEnabled(true);
         View vHeader = LayoutInflater.from(getContext()).inflate(R.layout.view_global_menu_header, null);
