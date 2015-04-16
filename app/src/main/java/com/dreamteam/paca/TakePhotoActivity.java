@@ -165,7 +165,11 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
     @OnClick(R.id.btnAccept)
     public void onAcceptClick() {
-        PublishActivity.openWithPhotoUri(this, Uri.fromFile(photoPath));
+        //TODO
+        //This is where we have to upload the photo to the server
+        //Then go back to the main feed
+
+        //PublishActivity.openWithPhotoUri(this, Uri.fromFile(photoPath));
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -229,45 +233,27 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             return true;
         }
 
-        // setPreviewSize: requested preview size 1920 x 1080 (camera id 0)
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            //List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            //Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            //Can I hardcode this?
+            //This hardcode is terrible to do but this size works across ALL android devices
             parameters1.setPreviewSize(640,480);
             previewSize = parameters1.getPreviewSize();
             Log.d("myTag preview size:", previewSize.toString());
-            //return parameters1;
-            //*/
-            //previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
-
-            //previewSize = CameraUtils.getLargestPictureSize(mHost, parameters);List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             return previewSize;
         }
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
-
             List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             Object[] sizeList = sizes.toArray();
             for(int i = 0; i < sizeList.length - 1; i++) {
                 Log.d("myTag size list", sizeList[i].toString());
             }
             Camera.Size cs = sizes.get(0);
-            //Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            //parameters1.setPreviewSize(cs.width,cs.height);
-            //previewSize = parameters1.getPreviewSize();
-            //return parameters1;
-            //*/
-            //previewSize = getPreviewSize(0,cs.width,cs.height,parameters);
-            //return parameters1;
-
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
             return parameters1;
-            //
         }
 
         @Override
@@ -296,10 +282,12 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
     @Override
     public void onBackPressed() {
+        //TODO
+        //Get this button working!
         if (currentState == STATE_SETUP_PHOTO) {
             btnTakePhoto.setEnabled(true);
-            vUpperPanel.showNext();
-            vLowerPanel.showNext();
+            vUpperPanel.showPrevious();
+            vLowerPanel.showPrevious();
             updateState(STATE_TAKE_PHOTO);
         } else {
             super.onBackPressed();

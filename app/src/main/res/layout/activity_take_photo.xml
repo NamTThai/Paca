@@ -87,11 +87,11 @@
                     android:background="@drawable/btn_default_light"
                     android:src="@drawable/ic_edit_white_24dp" /-->
 
-                <ImageButton
+                <!--ImageButton
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_edit_white_24dp" />
+                    android:src="@drawable/ic_edit_white_24dp" /-->
 
                 <View
                     android:layout_width="0dp"
@@ -196,7 +196,5 @@
 
             </LinearLayout>
         </ViewSwitcher>
-
-
     </LinearLayout>
 </FrameLayout>
