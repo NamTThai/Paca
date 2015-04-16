@@ -17,16 +17,13 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.util.LruCache;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
-import android.widget.ListView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -91,9 +88,9 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gallery_host);
+        setContentView(R.layout.activity_gallery);
 
-        this.getSupportActionBar().setElevation(0);
+        getSupportActionBar().setElevation(0);
 
         mRequestQueue = getRequestQueue();
         mImageLoader = getImageLoader();
@@ -104,14 +101,9 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
         } else {
+            mResolvingError = savedInstanceState.getBoolean(RESOLVING_ERROR, false);
             feedAdapter.updateItems(false);
         }
-
-
-
-        //if (savedInstanceState != null) {
-        //    mResolvingError = savedInstanceState.getBoolean(RESOLVING_ERROR, false);
-        //}
     }
 
     private void setupFeed() {
@@ -444,7 +436,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 .show();
     }
 
-    /*@Override
+    @Override
     public void onCommentsClick(View v, int position) {
         final Intent intent = new Intent(this, CommentsActivity.class);
         int[] startingLocation = new int[2];
@@ -452,31 +444,12 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
         startActivity(intent);
         overridePendingTransition(0, 0);
-    }*/
-
-    @Override
-    public void onCommentsClick(View v, int position) {
-
     }
 
     @Override
     public void onMoreClick(View v, int itemPosition) {
         FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, itemPosition, this);
     }
-
-    @Override
-    public void onProfileClick(View v) {
-
-    }
-
-    /*@Override
-    public void onProfileClick(View v) {
-        int[] startingLocation = new int[2];
-        v.getLocationOnScreen(startingLocation);
-        startingLocation[0] += v.getWidth() / 2;
-        UserProfileActivity.startUserProfileFromLocation(startingLocation, this);
-        overridePendingTransition(0, 0);
-    }*/
 
     @Override
     public void onReportClick(int feedItem) {

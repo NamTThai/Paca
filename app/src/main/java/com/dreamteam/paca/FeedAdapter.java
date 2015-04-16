@@ -414,7 +414,5 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         public void onCommentsClick(View v, int position);
 
         public void onMoreClick(View v, int position);
-
-        public void onProfileClick(View v);
     }
 }
