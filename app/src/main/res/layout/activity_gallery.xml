@@ -10,14 +10,14 @@
         layout="@layout/view_feed_toolbar" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvFeed"
+        android:id="@+id/image_feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:scrollbars="none" />
 
     <ImageButton
-        android:id="@+id/btnCreate"
+        android:id="@+id/take_photos"
         android:layout_width="@dimen/btn_fab_size"
         android:layout_height="@dimen/btn_fab_size"
         android:layout_alignParentBottom="true"

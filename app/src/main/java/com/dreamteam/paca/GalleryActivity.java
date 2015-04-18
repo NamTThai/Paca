@@ -19,7 +19,6 @@ import android.provider.Settings;
 import android.support.v4.util.LruCache;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -76,9 +75,9 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     private static final int ANIM_DURATION_TOOLBAR = 300;
     private static final int ANIM_DURATION_FAB = 400;
 
-    @InjectView(R.id.rvFeed)
+    @InjectView(R.id.image_feed)
     RecyclerView rvFeed;
-    @InjectView(R.id.btnCreate)
+    @InjectView(R.id.take_photos)
     ImageButton btnCreate;
 
     private FeedAdapter feedAdapter;
@@ -96,34 +95,12 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         mImageLoader = getImageLoader();
         mGoogleApiClient = getGoogleApiClient();
 
-        setupFeed();
-
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
         } else {
             mResolvingError = savedInstanceState.getBoolean(RESOLVING_ERROR, false);
             feedAdapter.updateItems(false);
         }
-    }
-
-    private void setupFeed() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
-            @Override
-            protected int getExtraLayoutSpace(RecyclerView.State state) {
-                return 300;
-            }
-        };
-        rvFeed.setLayoutManager(linearLayoutManager);
-
-        feedAdapter = new FeedAdapter(this);
-        feedAdapter.setOnFeedItemClickListener(this);
-        rvFeed.setAdapter(feedAdapter);
-        rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
-            }
-        });
     }
 
     @Override
@@ -158,7 +135,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        fetchImage(response);
+                        setupFeed(response);
                     }
                 },
                 new Response.ErrorListener() {
@@ -303,21 +280,34 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         feedAdapter.updateItems(true);
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    private void setupFeed(JSONArray response) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
+            @Override
+            protected int getExtraLayoutSpace(RecyclerView.State state) {
+                return 300;
+            }
+        };
+        rvFeed.setLayoutManager(linearLayoutManager);
 
-        switch (id) {
-            case R.id.action_open_camera:
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    dispatchTakePictureIntent();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        ArrayList<String> feedItems = new ArrayList<>();
+        try {
+            for (int i = 0; i < response.length(); i++) {
+                feedItems.add(response.getString(i));
+            }
+            feedAdapter = new FeedAdapter(this, feedItems);
+        } catch (JSONException e) {
+            feedAdapter = new FeedAdapter(this);
         }
-    }*/
+
+        feedAdapter.setOnFeedItemClickListener(this);
+        rvFeed.setAdapter(feedAdapter);
+        rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
+            }
+        });
+    }
 
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
@@ -356,20 +346,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                     });
         }
         return mImageLoader;
-    }
-
-    private void fetchImage(JSONArray array) {
-        ArrayList<String> initialAddresses = new ArrayList<>();
-        try {
-            for (int i = 0; i < array.length(); i++) {
-                initialAddresses.add(array.getString(i));
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, JSONException.class.getName(), e);
-        }
-
-        //ListView imageStream = (ListView) findViewById(R.id.main_gallery);
-        //imageStream.setAdapter(new ImageAdapter(this, initialAddresses));
     }
 
     public void showSettingsAlert() {
@@ -471,7 +447,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         FeedContextMenuManager.getInstance().hideContextMenu();
     }
 
-    @OnClick(R.id.btnCreate)
+    @OnClick(R.id.take_photos)
     public void onTakePhotoClick() {
         int[] startingLocation = new int[2];
         btnCreate.getLocationOnScreen(startingLocation);

@@ -43,6 +43,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private static final int ANIMATED_ITEMS_COUNT = 2;
 
     private Context context;
+    private ArrayList<String> listItems;
     private int lastAnimatedPosition = -1;
     private int itemsCount = 0;
     private boolean animateItems = false;
@@ -57,7 +58,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private int loadingViewSize = Utils.dpToPx(200);
 
     public FeedAdapter(Context context) {
+        new FeedAdapter(context, new ArrayList<String>());
+    }
+
+    public FeedAdapter(Context context, ArrayList<String> items) {
         this.context = context;
+        listItems = items;
     }
 
     @Override
@@ -121,10 +127,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private void bindDefaultFeedItem(int position, CellFeedViewHolder holder) {
         if (position % 2 == 0) {
             holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_1);
-            //holder.ivFeedBottom.setImageResource(R.drawable.img_feed_bottom_1);
         } else {
             holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_2);
-            //holder.ivFeedBottom.setImageResource(R.drawable.img_feed_bottom_2);
         }
         updateLikesCounter(holder, false, true);
         updateHeartButton(holder, false);
@@ -257,38 +261,24 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @Override
     public void onClick(View view) {
         final int viewId = view.getId();
-        if (viewId == R.id.btnDisLike) {
-             CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
-            if (!likedPositions.contains(holder.getPosition())) {
-                likedPositions.add(holder.getPosition());
-                updateLikesCounter(holder, true, false);
-                //updateHeartButton(holder, true);
-            }
-        /*} else if (viewId == R.id.btnMore) {
-            if (onFeedItemClickListener != null) {
-                onFeedItemClickListener.onMoreClick(view, (Integer) view.getTag());
-            }*/
-        }else if (viewId == R.id.btnLike) {
-            CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
-            if (!likedPositions.contains(holder.getPosition())) {
-                likedPositions.add(holder.getPosition());
-                updateLikesCounter(holder, true, true);
-                //updateHeartButton(holder, true);
-            }
-        //}
-        } else if (viewId == R.id.ivFeedCenter) {
-            CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
-            //if (!likedPositions.contains(holder.getPosition())) {
-                //likedPositions.add(holder.getPosition());
-                //updateLikesCounter(holder, true);
-                //animatePhotoLike(holder);
-                //updateHeartButton(holder, false);
-            //}
-        } /*else if (viewId == R.id.ivUserProfile) {
-            if (onFeedItemClickListener != null) {
-                onFeedItemClickListener.onProfileClick(view);
-            }
-        }*/
+        switch (viewId) {
+            case R.id.btnDisLike:
+                CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
+                if (!likedPositions.contains(holder.getPosition())) {
+                    likedPositions.add(holder.getPosition());
+                    updateLikesCounter(holder, true, false);
+                    //updateHeartButton(holder, true);
+                }
+                break;
+            case R.id.btnLike:
+                holder = (CellFeedViewHolder) view.getTag();
+                if (!likedPositions.contains(holder.getPosition())) {
+                    likedPositions.add(holder.getPosition());
+                    updateLikesCounter(holder, true, true);
+                    //updateHeartButton(holder, true);
+                }
+                break;
+        }
     }
 
     /*private void animatePhotoLike(final CellFeedViewHolder holder) {
@@ -373,30 +363,19 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         notifyItemChanged(0);
     }
 
-    /*@Override
-    public void onClick(View v) {
-
-    }*/
-
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.ivFeedCenter)
         ImageView ivFeedCenter;
-        //@InjectView(R.id.ivFeedBottom)
-        //ImageView ivFeedBottom;
         @InjectView(R.id.btnDisLike)
         ImageButton btnDisLike;
         @InjectView(R.id.btnLike)
         ImageButton btnLike;
-        //@InjectView(R.id.btnMore)
-        //ImageButton btnMore;
         @InjectView(R.id.vBgLike)
         View vBgLike;
         @InjectView(R.id.ivLike)
         ImageView ivLike;
         @InjectView(R.id.tsLikesCounter)
         TextSwitcher tsLikesCounter;
-        //@InjectView(R.id.ivUserProfile)
-        //ImageView ivUserProfile;
         @InjectView(R.id.vImageRoot)
         FrameLayout vImageRoot;
 
