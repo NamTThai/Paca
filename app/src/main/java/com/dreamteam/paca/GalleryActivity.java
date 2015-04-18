@@ -56,6 +56,9 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     private static final int REQUEST_CAMERA = 0;
     private static final int REQUEST_TAKE_PHOTO = 1;
 
+    private static final int ANIM_DURATION_TOOLBAR = 300;
+    private static final int ANIM_DURATION_FAB = 400;
+
     private static final String GET_PICTURE_ADDRESS_URI = "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php";
     private static final String LONGITUDE = "longitude";
     private static final String LATITUDE = "latitude";
@@ -71,9 +74,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     private boolean mResolvingError;
 
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
-
-    private static final int ANIM_DURATION_TOOLBAR = 300;
-    private static final int ANIM_DURATION_FAB = 400;
 
     @InjectView(R.id.image_feed)
     RecyclerView rvFeed;
@@ -106,8 +106,10 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (ACTION_SHOW_LOADING_ITEM.equals(intent.getAction())) {
-            showFeedLoadingItemDelayed();
+        switch (intent.getAction()) {
+            case ACTION_SHOW_LOADING_ITEM:
+                showFeedLoadingItemDelayed();
+                break;
         }
     }
 
@@ -246,7 +248,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         int actionbarSize = Utils.dpToPx(56);
         getToolbar().setTranslationY(-actionbarSize);
         getIvLogo().setTranslationY(-actionbarSize);
-        getInboxMenuItem().getActionView().setTranslationY(-actionbarSize);
 
         getToolbar().animate()
                 .translationY(0)
@@ -255,18 +256,14 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         getIvLogo().animate()
                 .translationY(0)
                 .setDuration(ANIM_DURATION_TOOLBAR)
-                .setStartDelay(400);
-        getInboxMenuItem().getActionView().animate()
-                .translationY(0)
-                .setDuration(ANIM_DURATION_TOOLBAR)
-                .setStartDelay(500)
+                .setStartDelay(400)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         startContentAnimation();
-                    }
-                })
+                    }})
                 .start();
+        ;
     }
 
     @TargetApi(14)
@@ -277,7 +274,14 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 .setStartDelay(300)
                 .setDuration(ANIM_DURATION_FAB)
                 .start();
-        feedAdapter.updateItems(true);
+        getFeedAdapter().updateItems(true);
+    }
+
+    public FeedAdapter getFeedAdapter() {
+        if (feedAdapter == null) {
+            feedAdapter = new FeedAdapter(this);
+        }
+        return feedAdapter;
     }
 
     private void setupFeed(JSONArray response) {
@@ -296,7 +300,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
             }
             feedAdapter = new FeedAdapter(this, feedItems);
         } catch (JSONException e) {
-            feedAdapter = new FeedAdapter(this);
+            getFeedAdapter();
         }
 
         feedAdapter.setOnFeedItemClickListener(this);

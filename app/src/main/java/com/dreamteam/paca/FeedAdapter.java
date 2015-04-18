@@ -21,6 +21,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
 
+import com.android.volley.toolbox.NetworkImageView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +38,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private static final int VIEW_TYPE_DEFAULT = 1;
     private static final int VIEW_TYPE_LOADER = 2;
 
+    private static final String ADDRESS_URI = "http://nthai.cs.trincoll.edu/Pictures/";
+
     private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
@@ -43,7 +47,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private static final int ANIMATED_ITEMS_COUNT = 2;
 
     private Context context;
-    private ArrayList<String> listItems;
+    private ArrayList<String> feedItems;
     private int lastAnimatedPosition = -1;
     private int itemsCount = 0;
     private boolean animateItems = false;
@@ -63,7 +67,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     public FeedAdapter(Context context, ArrayList<String> items) {
         this.context = context;
-        listItems = items;
+        feedItems = items;
     }
 
     @Override
@@ -75,7 +79,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             //cellFeedViewHolder.btnMore.setOnClickListener(this);
             //cellFeedViewHolder.ivFeedCenter.setOnClickListener(this);
             cellFeedViewHolder.btnLike.setOnClickListener(this);
-            //cellFeedViewHolder.ivUserProfile.setOnClickListener(this);
         } else if (viewType == VIEW_TYPE_LOADER) {
             View bgView = new View(context);
             bgView.setLayoutParams(new FrameLayout.LayoutParams(
@@ -120,16 +123,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (getItemViewType(position) == VIEW_TYPE_DEFAULT) {
             bindDefaultFeedItem(position, holder);
         } else if (getItemViewType(position) == VIEW_TYPE_LOADER) {
-            bindLoadingFeedItem(holder);
+            bindLoadingFeedItem(position, holder);
         }
     }
 
     private void bindDefaultFeedItem(int position, CellFeedViewHolder holder) {
-        if (position % 2 == 0) {
-            holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_1);
-        } else {
-            holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_2);
-        }
+        position = position % feedItems.size();
+        String uri = ADDRESS_URI + feedItems.get(position);
+        holder.ivFeedCenter.setImageUrl(uri, ((GalleryActivity) context).getImageLoader());
+
         updateLikesCounter(holder, false, true);
         updateHeartButton(holder, false);
 
@@ -144,7 +146,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         resetLikeAnimationState(holder);
     }
 
-    private void bindLoadingFeedItem(final CellFeedViewHolder holder) {
+    private void bindLoadingFeedItem(int position, final CellFeedViewHolder holder) {
         holder.ivFeedCenter.setImageResource(R.drawable.img_feed_center_1);
         //holder.ivFeedBottom.setImageResource(R.drawable.img_feed_bottom_1);
         holder.vSendingProgress.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -365,7 +367,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.ivFeedCenter)
-        ImageView ivFeedCenter;
+        NetworkImageView ivFeedCenter;
         @InjectView(R.id.btnDisLike)
         ImageButton btnDisLike;
         @InjectView(R.id.btnLike)
