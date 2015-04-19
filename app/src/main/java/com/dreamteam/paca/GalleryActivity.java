@@ -10,11 +10,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.util.LruCache;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,21 +36,15 @@ import com.google.android.gms.location.LocationServices;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 
 public class GalleryActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,FeedAdapter.OnFeedItemClickListener,
         FeedContextMenu.OnFeedContextMenuItemClickListener {
     public static final String TAG = GalleryActivity.class.getName();
-    private static final int REQUEST_CAMERA = 0;
     private static final int REQUEST_TAKE_PHOTO = 1;
 
     private static final int ANIM_DURATION_TOOLBAR = 300;
@@ -78,7 +69,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     @InjectView(R.id.image_feed)
     RecyclerView rvFeed;
     @InjectView(R.id.take_photos)
-    ImageButton btnCreate;
+    ImageButton buttonTakePhotos;
 
     private FeedAdapter feedAdapter;
 
@@ -214,16 +205,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 }
                 break;
             case REQUEST_TAKE_PHOTO:
-                sendPhoto(null);
-                /*Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                if (bitmap != null) {
-                    try {
-                        sendPhoto(bitmap);
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }*/
                 break;
         }
     }
@@ -240,7 +221,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
     @TargetApi(14)
     private void startIntroAnimation() {
-        btnCreate.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.btn_fab_size));
+        buttonTakePhotos.setTranslationY(2 * getResources().getDimensionPixelOffset(R.dimen.btn_fab_size));
 
         int actionbarSize = Utils.dpToPx(56);
         getToolbar().setTranslationY(-actionbarSize);
@@ -265,7 +246,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
     @TargetApi(14)
     private void startContentAnimation() {
-        btnCreate.animate()
+        buttonTakePhotos.animate()
                 .translationY(0)
                 .setInterpolator(new OvershootInterpolator(1.f))
                 .setStartDelay(300)
@@ -369,50 +350,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 .show();
     }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-
-    /* This function returns an image file created from the image
-     * in order to upload the image to the server
-     */
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        String storageDir = Environment.getExternalStorageDirectory() + "/picupload";
-        File dir = new File(storageDir);
-        if (!dir.exists())
-            dir.mkdir();
-
-        File image = new File(storageDir + "/" + imageFileName + ".jpg");
-        return image;
-    }
-
-    public void sendPhoto(Bitmap bitmap) {
-        new AlertDialog.Builder(this)
-                .setMessage("Uploaded successfully")
-                .create()
-                .show();
-    }
-
     @Override
     public void onCommentsClick(View v, int position) {
         final Intent intent = new Intent(this, CommentsActivity.class);
@@ -448,22 +385,14 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         FeedContextMenuManager.getInstance().hideContextMenu();
     }
 
-    @OnClick(R.id.take_photos)
-    public void onTakePhotoClick() {
+    public void onTakePhotoClick(View view) {
         int[] startingLocation = new int[2];
-        btnCreate.getLocationOnScreen(startingLocation);
-        startingLocation[0] += btnCreate.getWidth() / 2;
+        buttonTakePhotos.getLocationOnScreen(startingLocation);
+        startingLocation[0] += buttonTakePhotos.getWidth() / 2;
 
-        //TODO
-        //edit the camera activity that was imported in with the open source project
-        //ensure the the camera only takes a 540x540 picture
-
-        /*Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            dispatchTakePictureIntent();
-        }*/
-
-        TakePhotoActivity.startCameraFromLocation(startingLocation, this);
+        Intent intent = new Intent(this, TakePhotoActivity.class);
+        intent.putExtra(TakePhotoActivity.ARG_REVEAL_START_LOCATION, startingLocation);
+        startActivityForResult(intent, REQUEST_TAKE_PHOTO);
         overridePendingTransition(0, 0);
     }
 /*

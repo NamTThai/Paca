@@ -5,18 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -25,18 +21,14 @@ import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
-import android.hardware.Camera;
-import android.hardware.camera2.*;
 
 import com.commonsware.cwac.camera.CameraHost;
 import com.commonsware.cwac.camera.CameraHostProvider;
-import com.commonsware.cwac.camera.CameraUtils;
 import com.commonsware.cwac.camera.CameraView;
 import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
 
 import java.io.File;
-import java.util.List;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -52,7 +44,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final int STATE_TAKE_PHOTO = 0;
     private static final int STATE_SETUP_PHOTO = 1;
-    private Camera mCamera;
 
     @InjectView(R.id.vRevealBackground)
     RevealBackgroundView vRevealBackground;
@@ -75,15 +66,8 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
     private boolean pendingIntro;
     private int currentState;
-    private CameraHost mHost;
 
     private File photoPath;
-
-    public static void startCameraFromLocation(int[] startingLocation, Activity startingActivity) {
-        Intent intent = new Intent(startingActivity, TakePhotoActivity.class);
-        intent.putExtra(ARG_REVEAL_START_LOCATION, startingLocation);
-        startingActivity.startActivity(intent);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,59 +204,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         return new MyCameraHost(this);
     }
 
-    class MyCameraHost extends SimpleCameraHost {
-
-        private Camera.Size previewSize;
-
-        public MyCameraHost(Context ctxt) {
-            super(ctxt);
-        }
-
-        @Override
-        public boolean useFullBleedPreview() {
-            return true;
-        }
-
-        @Override
-        public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            //This hardcode is terrible to do but this size works across ALL android devices
-            parameters1.setPreviewSize(640,480);
-            previewSize = parameters1.getPreviewSize();
-            Log.d("myTag preview size:", previewSize.toString());
-            return previewSize;
-        }
-
-        @Override
-        public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Object[] sizeList = sizes.toArray();
-            for(int i = 0; i < sizeList.length - 1; i++) {
-                Log.d("myTag size list", sizeList[i].toString());
-            }
-            Camera.Size cs = sizes.get(0);
-            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            previewSize = parameters1.getPreviewSize();
-            return parameters1;
-        }
-
-        @Override
-        public void saveImage(PictureTransaction xact, final Bitmap bitmap) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showTakenPicture(bitmap);
-                }
-            });
-        }
-
-        @Override
-        public void saveImage(PictureTransaction xact, byte[] image) {
-            super.saveImage(xact, image);
-            photoPath = getPhotoPath();
-        }
-    }
-
     private void showTakenPicture(Bitmap bitmap) {
         vUpperPanel.showNext();
         vLowerPanel.showNext();
@@ -313,6 +244,48 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_right);
             vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_right);
             ivTakenPhoto.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private class MyCameraHost extends SimpleCameraHost {
+
+        private Camera.Size previewSize;
+
+        public MyCameraHost(Context ctxt) {
+            super(ctxt);
+        }
+
+        @Override
+        public boolean useFullBleedPreview() {
+            return true;
+        }
+
+        @Override
+        public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
+            return previewSize;
+        }
+
+        @Override
+        public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
+            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            previewSize = parameters1.getPreviewSize();
+            return parameters1;
+        }
+
+        @Override
+        public void saveImage(PictureTransaction xact, final Bitmap bitmap) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showTakenPicture(bitmap);
+                }
+            });
+        }
+
+        @Override
+        public void saveImage(PictureTransaction xact, byte[] image) {
+            super.saveImage(xact, image);
+            photoPath = getPhotoPath();
         }
     }
 }
