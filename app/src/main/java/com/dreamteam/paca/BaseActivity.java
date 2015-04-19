@@ -36,7 +36,7 @@ public class BaseActivity extends ActionBarActivity implements GlobalMenuView.On
     protected void setupToolbar() {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            toolbar.setNavigationIcon(R.drawable.ic_menu_white);
+            //toolbar.setNavigationIcon(R.drawable.ic_menu_white);
         }
     }
 

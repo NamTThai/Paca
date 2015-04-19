@@ -203,18 +203,15 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (resultCode) {
-            case RESULT_OK:
-                if (!getGoogleApiClient().isConnecting() &&
-                        !getGoogleApiClient().isConnected()) {
-                    getGoogleApiClient().connect();
-                }
-                break;
-        }
-
         switch (requestCode) {
             case REQUEST_RESOLVE_ERROR:
                 mResolvingError = false;
+                if (resultCode == RESULT_OK) {
+                    if (!getGoogleApiClient().isConnecting() &&
+                            !getGoogleApiClient().isConnected()) {
+                        getGoogleApiClient().connect();
+                    }
+                }
                 break;
             case REQUEST_TAKE_PHOTO:
                 sendPhoto(null);
