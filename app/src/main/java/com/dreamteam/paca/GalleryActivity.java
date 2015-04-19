@@ -204,8 +204,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                     }
                 }
                 break;
-            case REQUEST_TAKE_PHOTO:
-                break;
         }
     }
 
@@ -392,7 +390,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
         Intent intent = new Intent(this, TakePhotoActivity.class);
         intent.putExtra(TakePhotoActivity.ARG_REVEAL_START_LOCATION, startingLocation);
-        startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        startActivity(intent);
         overridePendingTransition(0, 0);
     }
 /*

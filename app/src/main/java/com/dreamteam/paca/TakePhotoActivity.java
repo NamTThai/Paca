@@ -35,6 +35,7 @@ import butterknife.InjectView;
 public class TakePhotoActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener,
         CameraHostProvider {
     public static final String ARG_REVEAL_START_LOCATION = "reveal_start_location";
+    public static final int RESULT_UPLOADING = 0;
 
     private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
@@ -135,11 +136,10 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     }
 
     public void onUploadClick(View view) {
-        //TODO
-        //This is where we have to upload the photo to the server
-        //Then go back to the main feed
-
-        //PublishActivity.openWithPhotoUri(this, Uri.fromFile(photoPath));
+        if (photoPath != null) {
+            new UploadPhotoTask(this, photoPath.getName()).execute(photoPath.getAbsolutePath());
+            finish();
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

@@ -87,7 +87,7 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/btn_default_light"
-                    android:src="@drawable/upload"
+                    android:src="@drawable/ic_action_upload"
                     android:onClick="onUploadClick"
                     android:contentDescription="@string/action_upload"/>
             </LinearLayout>
