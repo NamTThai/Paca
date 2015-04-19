@@ -31,11 +31,7 @@ import com.commonsware.cwac.camera.SimpleCameraHost;
 import java.io.File;
 
 import butterknife.InjectView;
-import butterknife.OnClick;
 
-/**
- * Created by Miroslaw Stanek on 08.02.15. Edited by Dan Flanagan
- */
 public class TakePhotoActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener,
         CameraHostProvider {
     public static final String ARG_REVEAL_START_LOCATION = "reveal_start_location";
@@ -91,38 +87,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         });
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void updateStatusBarColor() {
-        if (Utils.isAndroid5()) {
-            getWindow().setStatusBarColor(0xff111111);
-        }
-    }
-
-    private void setupRevealBackground(Bundle savedInstanceState) {
-        vRevealBackground.setFillPaintColor(0xFF16181a);
-        vRevealBackground.setOnStateChangeListener(this);
-        if (savedInstanceState == null) {
-            final int[] startingLocation = getIntent().getIntArrayExtra(ARG_REVEAL_START_LOCATION);
-            vRevealBackground.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    vRevealBackground.getViewTreeObserver().removeOnPreDrawListener(this);
-                    vRevealBackground.startFromLocation(startingLocation);
-                    return true;
-                }
-            });
-        } else {
-            vRevealBackground.setToFinishedFrame();
-        }
-    }
-
-    private void setupPhotoFilters() {
-        PhotoFiltersAdapter photoFiltersAdapter = new PhotoFiltersAdapter(this);
-        rvFilters.setHasFixedSize(true);
-        rvFilters.setAdapter(photoFiltersAdapter);
-        rvFilters.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-    }
-
     @Override
     protected boolean shouldInstallDrawer() {
         return false;
@@ -140,15 +104,37 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         cameraView.onPause();
     }
 
-    @OnClick(R.id.btnTakePhoto)
-    public void onTakePhotoClick() {
+    @Override
+    public void onBackPressed() {
+        if (currentState == STATE_SETUP_PHOTO) {
+            btnTakePhoto.setEnabled(true);
+            vUpperPanel.showPrevious();
+            vLowerPanel.showPrevious();
+            updateState(STATE_TAKE_PHOTO);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void onRetakeClick(View view) {
+        btnTakePhoto.setEnabled(true);
+        vUpperPanel.showPrevious();
+        vLowerPanel.showPrevious();
+        updateState(STATE_TAKE_PHOTO);
+    }
+
+    public void onReturnClick(View view) {
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    public void onShutterClick(View view) {
         btnTakePhoto.setEnabled(false);
         cameraView.takePicture(true, true);
         animateShutter();
     }
 
-    @OnClick(R.id.btnAccept)
-    public void onAcceptClick() {
+    public void onUploadClick(View view) {
         //TODO
         //This is where we have to upload the photo to the server
         //Then go back to the main feed
@@ -211,18 +197,36 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         updateState(STATE_SETUP_PHOTO);
     }
 
-    @Override
-    public void onBackPressed() {
-        //TODO
-        //Get this button working!
-        if (currentState == STATE_SETUP_PHOTO) {
-            btnTakePhoto.setEnabled(true);
-            vUpperPanel.showPrevious();
-            vLowerPanel.showPrevious();
-            updateState(STATE_TAKE_PHOTO);
-        } else {
-            super.onBackPressed();
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void updateStatusBarColor() {
+        if (Utils.isAndroid5()) {
+            getWindow().setStatusBarColor(0xff111111);
         }
+    }
+
+    private void setupRevealBackground(Bundle savedInstanceState) {
+        vRevealBackground.setFillPaintColor(0xFF16181a);
+        vRevealBackground.setOnStateChangeListener(this);
+        if (savedInstanceState == null) {
+            final int[] startingLocation = getIntent().getIntArrayExtra(ARG_REVEAL_START_LOCATION);
+            vRevealBackground.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    vRevealBackground.getViewTreeObserver().removeOnPreDrawListener(this);
+                    vRevealBackground.startFromLocation(startingLocation);
+                    return true;
+                }
+            });
+        } else {
+            vRevealBackground.setToFinishedFrame();
+        }
+    }
+
+    private void setupPhotoFilters() {
+        PhotoFiltersAdapter photoFiltersAdapter = new PhotoFiltersAdapter(this);
+        rvFilters.setHasFixedSize(true);
+        rvFilters.setAdapter(photoFiltersAdapter);
+        rvFilters.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
     }
 
     private void updateState(int state) {

@@ -36,13 +36,6 @@
             android:name=".TakePhotoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.TransparentActivity" />
-        <activity
-            android:name=".PublishActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden">
-
-        </activity>
     </application>
 
 </manifest>

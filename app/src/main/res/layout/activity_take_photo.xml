@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".TakePhotoActivity">
 
     <com.dreamteam.paca.RevealBackgroundView
         android:id="@+id/vRevealBackground"
@@ -31,7 +33,8 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_close_white_24dp" />
+                    android:src="@drawable/ic_close_white_24dp"
+                    android:onClick="onReturnClick"/>
 
                 <View
                     android:layout_width="0dp"
@@ -62,36 +65,17 @@
                 android:paddingRight="16dp">
 
                 <ImageButton
-                    android:id="@+id/btnBack"
+                    android:id="@+id/btn_retake"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_arrow_back_white_24dp" />
+                    android:src="@drawable/ic_arrow_back_white_24dp"
+                    android:onClick="onRetakeClick"/>
 
                 <View
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1" />
-
-                <!--ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_edit_white_24dp" />
-
-                <ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_edit_white_24dp" /-->
-
-                <!--ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_edit_white_24dp" /-->
 
                 <View
                     android:layout_width="0dp"
@@ -99,11 +83,13 @@
                     android:layout_weight="1" />
 
                 <ImageButton
-                    android:id="@+id/btnAccept"
+                    android:id="@+id/btn_upload"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_arrow_forward_white_24dp" />
+                    android:src="@drawable/upload"
+                    android:onClick="onUploadClick"
+                    android:contentDescription="@string/action_upload"/>
             </LinearLayout>
 
         </ViewSwitcher>
@@ -167,7 +153,8 @@
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/btn_capture" />
+                        android:background="@drawable/btn_capture"
+                        android:onClick="onShutterClick"/>
                 </FrameLayout>
 
                 <!--FrameLayout
