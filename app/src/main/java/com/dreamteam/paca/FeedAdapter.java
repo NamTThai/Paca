@@ -192,6 +192,14 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         return itemsCount;
     }
 
+    public ArrayList<String> getFeedItems() {
+        return feedItems;
+    }
+
+    public void setFeedItems(ArrayList<String> feedItems) {
+        this.feedItems = feedItems;
+    }
+
     private void updateLikesCounter(CellFeedViewHolder holder, boolean animated, boolean like) {
         int currentLikesCount = likesCount.get(holder.getPosition());
         if(like) {

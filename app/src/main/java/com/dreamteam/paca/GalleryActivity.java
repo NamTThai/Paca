@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.util.LruCache;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -66,6 +67,8 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
 
+    @InjectView(R.id.refresh)
+    SwipeRefreshLayout mSwipeRefreshLayout;
     @InjectView(R.id.image_feed)
     RecyclerView rvFeed;
     @InjectView(R.id.take_photos)
@@ -85,6 +88,14 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         mRequestQueue = getRequestQueue();
         mImageLoader = getImageLoader();
         mGoogleApiClient = getGoogleApiClient();
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getGoogleApiClient().reconnect();
+            }
+        });
+        mSwipeRefreshLayout.setRefreshing(true);
 
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
@@ -129,6 +140,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                     @Override
                     public void onResponse(JSONArray response) {
                         setupFeed(response);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 },
                 new Response.ErrorListener() {
@@ -268,25 +280,32 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
             }
         };
         rvFeed.setLayoutManager(linearLayoutManager);
+        feedAdapter = (FeedAdapter) rvFeed.getAdapter();
 
         ArrayList<String> feedItems = new ArrayList<>();
         try {
             for (int i = 0; i < response.length(); i++) {
                 feedItems.add(response.getString(i));
             }
-            feedAdapter = new FeedAdapter(this, feedItems);
         } catch (JSONException e) {
             getFeedAdapter();
         }
-
-        feedAdapter.setOnFeedItemClickListener(this);
-        rvFeed.setAdapter(feedAdapter);
-        rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
-            }
-        });
+        
+        if (feedAdapter == null) {
+            feedAdapter = new FeedAdapter(this, feedItems);
+            feedAdapter.setOnFeedItemClickListener(this);
+            rvFeed.setAdapter(feedAdapter);
+            rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
+                }
+            });
+        } else {
+            feedAdapter.setFeedItems(feedItems);
+            feedAdapter.notifyDataSetChanged();
+            //rvFeed.notify();
+        }
     }
 
     public RequestQueue getRequestQueue() {
