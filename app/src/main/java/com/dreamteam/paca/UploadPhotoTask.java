@@ -137,7 +137,7 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
                         .setContentTitle("Uploading Picture")
                         .setContentText("Upload success!")
                         .build();
-                notificationManager.notify(ID_FAILED, mNotification);
+                notificationManager.notify(ID_UPLOADED, mNotification);
                 break;
         }
     }
