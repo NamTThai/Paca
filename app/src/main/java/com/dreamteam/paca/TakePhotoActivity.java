@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
@@ -306,13 +307,26 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
+            /*Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            parameters1.setPreviewSize(640,480);
+            previewSize = parameters1.getPreviewSize();
+            Log.d("myTag preview size:", previewSize.toString());*/
             return previewSize;
         }
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
-            /*Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            previewSize = parameters1.getPreviewSize();*/
+            /*List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            Object[] sizeList = sizes.toArray();
+            for(int i = 0; i < sizeList.length - 1; i++) {
+                Log.d("myTag size list", sizeList[i].toString());
+            }
+            Camera.Size cs = sizes.get(0);*/
+
+            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            previewSize = parameters1.getPreviewSize();
+
+
             //TODO
             //use camera2 characteristics to get the new preview size and camera preview size
             return parameters1;
