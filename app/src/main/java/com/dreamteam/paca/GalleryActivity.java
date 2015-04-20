@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -406,10 +407,11 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         int[] startingLocation = new int[2];
         buttonTakePhotos.getLocationOnScreen(startingLocation);
         startingLocation[0] += buttonTakePhotos.getWidth() / 2;
-
-        Intent intent = new Intent(this, TakePhotoActivity.class);
-        intent.putExtra(TakePhotoActivity.ARG_REVEAL_START_LOCATION, startingLocation);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Intent intent = new Intent(this, TakePhotoActivity.class);
+            intent.putExtra(TakePhotoActivity.ARG_REVEAL_START_LOCATION, startingLocation);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+        }
     }
 }
