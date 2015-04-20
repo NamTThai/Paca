@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.hardware.camera2.CameraCharacteristics;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -15,6 +14,7 @@ import android.graphics.SurfaceTexture;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +42,7 @@ import android.widget.ViewSwitcher;
 
 import android.media.Image;
 import android.media.ImageReader;
+import android.hardware.camera2.*;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -49,8 +50,8 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
 
 import com.commonsware.cwac.camera.CameraHost;
 import com.commonsware.cwac.camera.CameraHostProvider;
@@ -59,8 +60,8 @@ import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import butterknife.InjectView;
 
@@ -165,7 +166,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
     public void onShutterClick(View view) {
         btnTakePhoto.setEnabled(false);
-        cameraView.takePicture(true, true);
+        cameraView.takePicture(true, true);     //here we find an error is API is greater than 21
         animateShutter();
     }
 
@@ -288,8 +289,11 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     //This code is depricated API less than 21
     private class MyCameraHost extends SimpleCameraHost {
 
+        private CameraManager manager;
         private Size mPSize;
         private Camera.Size previewSize;
+        private String[] mCameraId;
+        private String mFrontFacingCamera;
 
         public MyCameraHost(Context ctxt) {
             super(ctxt);
@@ -307,26 +311,24 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
-            /*Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             parameters1.setPreviewSize(640,480);
             previewSize = parameters1.getPreviewSize();
-            Log.d("myTag preview size:", previewSize.toString());*/
+            Log.d("myTag preview size:", previewSize.toString());
             return previewSize;
         }
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
-            /*List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
             Object[] sizeList = sizes.toArray();
             for(int i = 0; i < sizeList.length - 1; i++) {
                 Log.d("myTag size list", sizeList[i].toString());
             }
-            Camera.Size cs = sizes.get(0);*/
-
+            Log.d("myTag sizes", sizes.toString());
+            Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
-
-
             //TODO
             //use camera2 characteristics to get the new preview size and camera preview size
             return parameters1;
@@ -347,10 +349,53 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             super.saveImage(xact, image);
             photoPath = getPhotoPath();
         }
+
+
+        public void setCameraId(String[] cameraId) {
+            mCameraId = cameraId;
+        }
+        public String getId() {
+            try {
+                //using this to get the IDs of all the connected camera devices
+                mCameraId = manager.getCameraIdList();
+            }catch (Exception e) {
+
+            }
+            return null;
+        }
+
+        public String setFrontFacingCameraId(){
+            String cameraId = null;
+            try {
+                for (int i = 0; i < mCameraId.length; i++) {
+                    cameraId = mCameraId[i];
+                    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+                    int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT) {
+                        mFrontFacingCamera = cameraId;
+                        return cameraId;
+                    }
+                    else{
+                        return null;
+                    }
+                }
+
+            }catch (Exception e){
+
+            } if(cameraId != null) {
+                mFrontFacingCamera = cameraId;
+                return cameraId;
+            }
+            else return null;
+        }
+        public String getFrontFacingCamera() {
+            return mFrontFacingCamera;
+        }
+
     }
 
+    // /*
 
-/*
     public class Cam2Host extends CameraDevice{
 
         private CameraManager manager;
@@ -369,6 +414,25 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         }
 
         public void getPictureSize(){
+            CameraCharacteristics characteristics = null;
+            StreamConfigurationMap configs = null;
+            try {
+                characteristics = manager.getCameraCharacteristics("0");
+            } catch (Exception e){
+
+            }
+            if (characteristics != null)
+                configs = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            if (configs != null) {
+                Size[] sizes = configs.getOutputSizes(ImageFormat.JPEG);
+            }
+        }
+
+        public void createSurfaces(Size[] sizes){
+            ImageReader mImageReader = ImageReader.newInstance(sizes[0].getWidth(), sizes[0].getHeight(),ImageFormat.JPEG, 2);
+            Surface jpegCaptureSurface = mImageReader.getSurface();
+            List<Surface> surfaces = new ArrayList<Surface>();
+            surfaces.add(jpegCaptureSurface);
 
         }
 
@@ -438,5 +502,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         public void close() {
 
         }
-    }*/
+    }
+    // */
 }
