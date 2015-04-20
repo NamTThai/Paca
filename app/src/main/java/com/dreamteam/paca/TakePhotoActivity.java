@@ -346,7 +346,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public void createCaptureSession(List<Surface> outputs, CameraCaptureSession.StateCallback callback, Handler handler) throws CameraAccessException {
-
+            
         }
 
         @Override
@@ -368,13 +368,13 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             mCameraId = cameraId;
         }
 
-        /*public CameraManager getManager() {
+        public CameraManager getManager() {
             return manager;
-        }*/
+        }
 
-        /*public String[] getCameraId() {
+        public String[] getCameraId() {
             return mCameraId;
-        }*/
+        }
 
         @Override
         public void close() {
