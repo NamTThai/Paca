@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
+import android.hardware.camera2.CameraCharacteristics;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -286,10 +287,16 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     //This code is depricated API less than 21
     private class MyCameraHost extends SimpleCameraHost {
 
+        private Size mPSize;
         private Camera.Size previewSize;
 
         public MyCameraHost(Context ctxt) {
             super(ctxt);
+        }
+
+        public Size setPictureSize(){
+
+            return mPSize;
         }
 
         @Override
@@ -304,8 +311,10 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
-            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            previewSize = parameters1.getPreviewSize();
+            /*Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            previewSize = parameters1.getPreviewSize();*/
+            //TODO
+            //use camera2 characteristics to get the new preview size and camera preview size
             return parameters1;
         }
 
@@ -327,16 +336,26 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     }
 
 
-
-    private class Cam2Host extends CameraDevice{
+/*
+    public class Cam2Host extends CameraDevice{
 
         private CameraManager manager;
         private String[] mCameraId;
+        private String mFrontFacingCamera;
+        private CameraCaptureSession mPreviewSession;
+        private CaptureRequest.Builder mPreviewBuilder;
+        private CameraDevice mCameraDevice;
+        private Size mPreviewSize;
+        private boolean mOpeningCamera;
 
-        Cam2Host(){
-            super();
+        public Cam2Host(Context cntx){
+            super(cntx);
 
             manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        }
+
+        public void getPictureSize(){
+
         }
 
         @Override
@@ -346,7 +365,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public void createCaptureSession(List<Surface> outputs, CameraCaptureSession.StateCallback callback, Handler handler) throws CameraAccessException {
-            
+
         }
 
         @Override
@@ -360,12 +379,37 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             return null;
         }
 
-        public void openCamera (String cameraId, CameraDevice.StateCallback callback, Handler handler){
-
-        }
-
         public void setCameraId(String[] cameraId) {
             mCameraId = cameraId;
+        }
+
+        public String getFrontFacingCamera() {
+            return mFrontFacingCamera;
+        }
+
+        public String setFrontFacingCameraId(){
+            String cameraId = null;
+            try {
+                for (int i = 0; i < mCameraId.length; i++) {
+                    cameraId = mCameraId[i];
+                    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+                    int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT) {
+                        mFrontFacingCamera = cameraId;
+                        return cameraId;
+                    }
+                    else{
+                        return null;
+                    }
+                }
+
+            }catch (Exception e){
+
+            } if(cameraId != null) {
+                mFrontFacingCamera = cameraId;
+                return cameraId;
+            }
+            else return null;
         }
 
         public CameraManager getManager() {
@@ -380,5 +424,5 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         public void close() {
 
         }
-    }
+    }*/
 }
