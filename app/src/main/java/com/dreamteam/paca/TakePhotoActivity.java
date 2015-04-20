@@ -5,42 +5,29 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import android.graphics.SurfaceTexture;
 import android.graphics.Bitmap;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Build.VERSION_CODES;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.view.LayoutInflater;
-import android.view.Surface;
-import android.view.TextureView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
-import android.media.Image;
 import android.media.ImageReader;
 import android.hardware.camera2.*;
 import android.hardware.camera2.CameraAccessException;
@@ -48,7 +35,6 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
@@ -62,6 +48,7 @@ import com.commonsware.cwac.camera.SimpleCameraHost;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Object;
 
 import butterknife.InjectView;
 
@@ -286,11 +273,16 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         }
     }
 
-    //This code is depricated API less than 21
+
+    //API less than 21
+    public void APICheck(){
+        if(Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP){
+
+        }
+    }
+
     private class MyCameraHost extends SimpleCameraHost {
 
-        private CameraManager manager;
-        private Size mPSize;
         private Camera.Size previewSize;
         private String[] mCameraId;
         private String mFrontFacingCamera;
@@ -299,10 +291,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             super(ctxt);
         }
 
-        public Size setPictureSize(){
-
-            return mPSize;
-        }
 
         @Override
         public boolean useFullBleedPreview() {
@@ -329,8 +317,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
-            //TODO
-            //use camera2 characteristics to get the new preview size and camera preview size
             return parameters1;
         }
 
@@ -350,51 +336,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             photoPath = getPhotoPath();
         }
 
-
-        public void setCameraId(String[] cameraId) {
-            mCameraId = cameraId;
-        }
-        public String getId() {
-            try {
-                //using this to get the IDs of all the connected camera devices
-                mCameraId = manager.getCameraIdList();
-            }catch (Exception e) {
-
-            }
-            return null;
-        }
-
-        public String setFrontFacingCameraId(){
-            String cameraId = null;
-            try {
-                for (int i = 0; i < mCameraId.length; i++) {
-                    cameraId = mCameraId[i];
-                    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-                    int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-                    if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT) {
-                        mFrontFacingCamera = cameraId;
-                        return cameraId;
-                    }
-                    else{
-                        return null;
-                    }
-                }
-
-            }catch (Exception e){
-
-            } if(cameraId != null) {
-                mFrontFacingCamera = cameraId;
-                return cameraId;
-            }
-            else return null;
-        }
-        public String getFrontFacingCamera() {
-            return mFrontFacingCamera;
-        }
-
     }
-
-    // /*
 
     public class Cam2Host extends CameraDevice{
 
