@@ -6,20 +6,16 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.ImageFormat;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
-import android.hardware.camera2.params.StreamConfigurationMap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Build.VERSION_CODES;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.Size;
-import android.view.Surface;
 import android.view.View;
+import android.view.ViewDebug;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -28,17 +24,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
 
-import android.media.ImageReader;
-import android.hardware.camera2.*;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
-
 import com.commonsware.cwac.camera.CameraHost;
 import com.commonsware.cwac.camera.CameraHostProvider;
 import com.commonsware.cwac.camera.CameraView;
@@ -46,9 +31,7 @@ import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.lang.Object;
 
 import butterknife.InjectView;
 
@@ -61,8 +44,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final int STATE_TAKE_PHOTO = 0;
     private static final int STATE_SETUP_PHOTO = 1;
-
-    private CameraDevice mCameraDevice;
 
     @InjectView(R.id.vRevealBackground)
     RevealBackgroundView vRevealBackground;
@@ -273,22 +254,12 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         }
     }
 
-
-    //API less than 21
-    public void APICheck(){
-        if(Build.VERSION.SDK_INT < VERSION_CODES.LOLLIPOP){
-
-        }
-    }
-
     private class MyCameraHost extends SimpleCameraHost {
 
         private Camera.Size previewSize;
-        private String[] mCameraId;
-        private String mFrontFacingCamera;
 
-        public MyCameraHost(Context ctxt) {
-            super(ctxt);
+        public MyCameraHost(Context context) {
+            super(context);
         }
 
 
@@ -299,22 +270,26 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
+            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            int previewSizeElement = 0;
+            for(int i = 0; i < sizes.size(); i++) {
+                int camPreviewWidth = sizes.get(i).width;
+                int camPreviewHeight = sizes.get(i).height;
+                Log.d("myTag camera size list",
+                        Integer.toString(camPreviewWidth) + "x" + Integer.toString(camPreviewHeight));
+                if(camPreviewWidth == 640 && camPreviewHeight == 480){
+                    previewSizeElement = i;
+                }
+            }
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            parameters1.setPreviewSize(640,480);
+            parameters1.setPreviewSize(sizes.get(previewSizeElement).width,
+                    sizes.get(previewSizeElement).height);
             previewSize = parameters1.getPreviewSize();
-            Log.d("myTag preview size:", previewSize.toString());
             return previewSize;
         }
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-            Object[] sizeList = sizes.toArray();
-            for(int i = 0; i < sizeList.length - 1; i++) {
-                Log.d("myTag size list", sizeList[i].toString());
-            }
-            Log.d("myTag sizes", sizes.toString());
-            Camera.Size cs = sizes.get(0);
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
             previewSize = parameters1.getPreviewSize();
             return parameters1;
@@ -337,113 +312,4 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         }
 
     }
-
-    public class Cam2Host extends CameraDevice{
-
-        private CameraManager manager;
-        private String[] mCameraId;
-        private String mFrontFacingCamera;
-        private CameraCaptureSession mPreviewSession;
-        private CaptureRequest.Builder mPreviewBuilder;
-        private CameraDevice mCameraDevice;
-        private Size mPreviewSize;
-        private boolean mOpeningCamera;
-
-        public Cam2Host(Context cntx){
-            super(cntx);
-
-            manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        }
-
-        public void getPictureSize(){
-            CameraCharacteristics characteristics = null;
-            StreamConfigurationMap configs = null;
-            try {
-                characteristics = manager.getCameraCharacteristics("0");
-            } catch (Exception e){
-
-            }
-            if (characteristics != null)
-                configs = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            if (configs != null) {
-                Size[] sizes = configs.getOutputSizes(ImageFormat.JPEG);
-            }
-        }
-
-        public void createSurfaces(Size[] sizes){
-            ImageReader mImageReader = ImageReader.newInstance(sizes[0].getWidth(), sizes[0].getHeight(),ImageFormat.JPEG, 2);
-            Surface jpegCaptureSurface = mImageReader.getSurface();
-            List<Surface> surfaces = new ArrayList<Surface>();
-            surfaces.add(jpegCaptureSurface);
-
-        }
-
-        @Override
-        public CaptureRequest.Builder createCaptureRequest(int templateType) throws CameraAccessException {
-            return null;
-        }
-
-        @Override
-        public void createCaptureSession(List<Surface> outputs, CameraCaptureSession.StateCallback callback, Handler handler) throws CameraAccessException {
-
-        }
-
-        @Override
-        public String getId() {
-            try {
-                //using this to get the IDs of all the connected camera devices
-                mCameraId = manager.getCameraIdList();
-            }catch (Exception e) {
-
-            }
-            return null;
-        }
-
-        public void setCameraId(String[] cameraId) {
-            mCameraId = cameraId;
-        }
-
-        public String getFrontFacingCamera() {
-            return mFrontFacingCamera;
-        }
-
-        public String setFrontFacingCameraId(){
-            String cameraId = null;
-            try {
-                for (int i = 0; i < mCameraId.length; i++) {
-                    cameraId = mCameraId[i];
-                    CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-                    int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-                    if (cOrientation == CameraCharacteristics.LENS_FACING_FRONT) {
-                        mFrontFacingCamera = cameraId;
-                        return cameraId;
-                    }
-                    else{
-                        return null;
-                    }
-                }
-
-            }catch (Exception e){
-
-            } if(cameraId != null) {
-                mFrontFacingCamera = cameraId;
-                return cameraId;
-            }
-            else return null;
-        }
-
-        public CameraManager getManager() {
-            return manager;
-        }
-
-        public String[] getCameraId() {
-            return mCameraId;
-        }
-
-        @Override
-        public void close() {
-
-        }
-    }
-    // */
 }
