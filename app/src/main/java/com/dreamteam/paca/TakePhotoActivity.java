@@ -326,10 +326,17 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         }
     }
 
+
+
     private class Cam2Host extends CameraDevice{
 
-        Cam2Host(){
+        private CameraManager manager;
+        private String[] mCameraId;
 
+        Cam2Host(){
+            super();
+
+            manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         }
 
         @Override
@@ -344,8 +351,30 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public String getId() {
+            try {
+                //using this to get the IDs of all the connected camera devices
+                mCameraId = manager.getCameraIdList();
+            }catch (Exception e) {
+
+            }
             return null;
         }
+
+        public void openCamera (String cameraId, CameraDevice.StateCallback callback, Handler handler){
+
+        }
+
+        public void setCameraId(String[] cameraId) {
+            mCameraId = cameraId;
+        }
+
+        /*public CameraManager getManager() {
+            return manager;
+        }*/
+
+        /*public String[] getCameraId() {
+            return mCameraId;
+        }*/
 
         @Override
         public void close() {
