@@ -5,22 +5,50 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
+import android.app.Fragment;
 import android.content.Context;
+import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.RectF;
+import android.graphics.SurfaceTexture;
 import android.graphics.Bitmap;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Size;
+import android.util.SparseIntArray;
+import android.view.Surface;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.LayoutInflater;
+import android.view.Surface;
+import android.view.TextureView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ViewSwitcher;
+
+import android.media.Image;
+import android.media.ImageReader;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.StreamConfigurationMap;
 
 import com.commonsware.cwac.camera.CameraHost;
 import com.commonsware.cwac.camera.CameraHostProvider;
@@ -29,6 +57,8 @@ import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
 
 import java.io.File;
+import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import butterknife.InjectView;
 
@@ -41,6 +71,8 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final int STATE_TAKE_PHOTO = 0;
     private static final int STATE_SETUP_PHOTO = 1;
+
+    private CameraDevice mCameraDevice;
 
     @InjectView(R.id.vRevealBackground)
     RevealBackgroundView vRevealBackground;
@@ -251,6 +283,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         }
     }
 
+    //This code is depricated API less than 21
     private class MyCameraHost extends SimpleCameraHost {
 
         private Camera.Size previewSize;
@@ -290,6 +323,33 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         public void saveImage(PictureTransaction xact, byte[] image) {
             super.saveImage(xact, image);
             photoPath = getPhotoPath();
+        }
+    }
+
+    private class Cam2Host extends CameraDevice{
+
+        Cam2Host(){
+
+        }
+
+        @Override
+        public CaptureRequest.Builder createCaptureRequest(int templateType) throws CameraAccessException {
+            return null;
+        }
+
+        @Override
+        public void createCaptureSession(List<Surface> outputs, CameraCaptureSession.StateCallback callback, Handler handler) throws CameraAccessException {
+
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public void close() {
+
         }
     }
 }
