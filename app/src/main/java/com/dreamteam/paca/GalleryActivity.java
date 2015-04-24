@@ -37,6 +37,7 @@ import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -289,12 +290,13 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         feedAdapter = (FeedAdapter) rvFeed.getAdapter();
 
         ArrayList<String> feedItems = new ArrayList<>();
-        try {
-            for (int i = 0; i < response.length(); i++) {
-                feedItems.add(response.getString(i));
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                JSONObject pictureObject = response.getJSONObject(i);
+                feedItems.add(pictureObject.getString("address"));
+            } catch (JSONException e) {
+                Log.d(TAG, response.toString());
             }
-        } catch (JSONException e) {
-            getFeedAdapter();
         }
         
         if (feedAdapter == null) {
