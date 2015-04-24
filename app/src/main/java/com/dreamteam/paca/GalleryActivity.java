@@ -17,6 +17,7 @@ import android.support.v4.util.LruCache;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -51,7 +52,8 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     private static final int ANIM_DURATION_TOOLBAR = 300;
     private static final int ANIM_DURATION_FAB = 400;
 
-    private static final String GET_PICTURE_ADDRESS_URI = "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php";
+    private static final String GET_PICTURE_ADDRESS_URI =
+            "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php?lat=%1$s&lng=%2$s";
     private static final String LONGITUDE = "longitude";
     private static final String LATITUDE = "latitude";
 
@@ -134,8 +136,11 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     @Override
     public void onConnected(Bundle bundle) {
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        String getPictureAddressUri = String.format(GET_PICTURE_ADDRESS_URI,
+                mLocation.getLatitude(), mLocation.getLongitude());
+        Log.d(TAG, getPictureAddressUri);
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, GET_PICTURE_ADDRESS_URI,
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, getPictureAddressUri,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -146,6 +151,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, error.getMessage());
                         new AlertDialog.Builder(GalleryActivity.this)
                                 .setMessage(R.string.cant_contact_server)
                                 .create()
