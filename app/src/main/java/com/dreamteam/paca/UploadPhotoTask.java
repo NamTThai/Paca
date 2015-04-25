@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
@@ -167,12 +169,14 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> postParams = new HashMap<>();
-                        int timestamp = (int) ((new Date().getTime()) / 1000);
+                        Date date = new Date();
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                        String formattedDate = sdf.format(date);
                         postParams.put("request_code", "0");
                         postParams.put("file_name", mFileName);
                         postParams.put("lat", Double.toString(mLat));
                         postParams.put("lng", Double.toString(mLng));
-                        postParams.put("timestamp", Integer.toString(timestamp));
+                        postParams.put("timestamp", formattedDate);
                         return postParams;
                     }
 
