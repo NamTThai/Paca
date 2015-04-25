@@ -56,7 +56,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     private static final String GET_PICTURE_ADDRESS_URI =
             "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php?lat=%1$s&lng=%2$s";
     private static final String TOKEN_IMAGE_ADDESS =
-            "http://cdn.cutestpaw.com/wp-content/uploads/2013/01/l-Who-said-llamas-couldnt-be-cute..jpg";
+            "https://thisgreenearth.files.wordpress.com/2011/04/alpaca.jpg";
 
     private static final String RESOLVING_ERROR = "Resolving error";
     private static final int REQUEST_RESOLVE_ERROR = 1001;
