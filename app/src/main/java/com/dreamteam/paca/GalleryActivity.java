@@ -55,6 +55,8 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
     private static final String GET_PICTURE_ADDRESS_URI =
             "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php?lat=%1$s&lng=%2$s";
+    private static final String TOKEN_IMAGE_ADDESS =
+            "http://cdn.cutestpaw.com/wp-content/uploads/2013/01/l-Who-said-llamas-couldnt-be-cute..jpg";
 
     private static final String RESOLVING_ERROR = "Resolving error";
     private static final int REQUEST_RESOLVE_ERROR = 1001;
@@ -287,13 +289,17 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         feedAdapter = (FeedAdapter) rvFeed.getAdapter();
 
         ArrayList<String> feedItems = new ArrayList<>();
-        for (int i = 0; i < response.length(); i++) {
-            try {
-                JSONObject pictureObject = response.getJSONObject(i);
-                feedItems.add(pictureObject.getString("address"));
-            } catch (JSONException | NullPointerException e) {
-                Log.d(TAG, response.toString());
+        if (response != null) {
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    JSONObject pictureObject = response.getJSONObject(i);
+                    feedItems.add(pictureObject.getString("address"));
+                } catch (JSONException | NullPointerException e) {
+                    feedItems.add(TOKEN_IMAGE_ADDESS);
+                }
             }
+        } else {
+            feedItems.add(TOKEN_IMAGE_ADDESS);
         }
         
         if (feedAdapter == null) {
