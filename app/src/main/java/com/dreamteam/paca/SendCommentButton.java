@@ -6,9 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ViewAnimator;
 
-/**
- * Created by froger_mcs on 01.12.14.
- */
 public class SendCommentButton extends ViewAnimator implements View.OnClickListener {
     public static final int STATE_SEND = 0;
     public static final int STATE_DONE = 1;

@@ -55,8 +55,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
     private static final String GET_PICTURE_ADDRESS_URI =
             "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php?lat=%1$s&lng=%2$s";
-    private static final String LONGITUDE = "longitude";
-    private static final String LATITUDE = "latitude";
 
     private static final String RESOLVING_ERROR = "Resolving error";
     private static final int REQUEST_RESOLVE_ERROR = 1001;
@@ -139,7 +137,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         String getPictureAddressUri = String.format(GET_PICTURE_ADDRESS_URI,
                 mLocation.getLatitude(), mLocation.getLongitude());
-        Log.d(TAG, getPictureAddressUri);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, getPictureAddressUri,
                 new Response.Listener<JSONArray>() {
@@ -152,6 +149,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        setupFeed(null);
                         Log.d(TAG, error.getMessage());
                         new AlertDialog.Builder(GalleryActivity.this)
                                 .setMessage(R.string.cant_contact_server)
@@ -258,7 +256,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                         startContentAnimation();
                     }})
                 .start();
-        ;
     }
 
     @TargetApi(14)
@@ -294,7 +291,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
             try {
                 JSONObject pictureObject = response.getJSONObject(i);
                 feedItems.add(pictureObject.getString("address"));
-            } catch (JSONException e) {
+            } catch (JSONException | NullPointerException e) {
                 Log.d(TAG, response.toString());
             }
         }
@@ -417,6 +414,10 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
 
         Intent intent = new Intent(this, TakePhotoActivity.class);
         intent.putExtra(TakePhotoActivity.ARG_REVEAL_START_LOCATION, startingLocation);
+        if (mLocation != null) {
+            intent.putExtra(TakePhotoActivity.ARG_LAT, mLocation.getLatitude());
+            intent.putExtra(TakePhotoActivity.ARG_LNG, mLocation.getLongitude());
+        }
         startActivity(intent);
         overridePendingTransition(0, 0);
     }

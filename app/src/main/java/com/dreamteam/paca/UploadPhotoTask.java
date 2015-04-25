@@ -6,12 +6,25 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
     public static final int ID_UPLOADING = 0;
@@ -21,18 +34,24 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
     private static final int RESULT_FAILED = 0;
     private static final int RESULT_UPLOADED = 1;
 
+    private static final String DATABASE_OPERATION_URI = "http://nthai.cs.trincoll.edu/PacaServer/db_operation.php";
     private static final String UPLOAD_URI = "http://nthai.cs.trincoll.edu/PacaServer/upload_photo.php";
 
     private Notification mNotification;
     private Context mContext;
+    private String mFileName;
+    private double mLat;
+    private double mLng;
 
-    public UploadPhotoTask(Context context, String fileName) {
+    public UploadPhotoTask(Context context, String fileName, double lat, double lng) {
         mContext = context;
         mNotification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle("Uploading Picture")
                 .setContentText(fileName)
                 .build();
+        mLat = lat;
+        mLng = lng;
     }
 
     @Override
@@ -42,6 +61,7 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
         String boundary = "*****";
+        String separator = "&";
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1 * 1024 * 1024;
@@ -71,7 +91,7 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
             dos = new DataOutputStream(conn.getOutputStream());
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename="+ fileName + "" + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=" + fileName + "" + lineEnd);
             dos.writeBytes(lineEnd);
 
             // create a buffer of  maximum size
@@ -99,8 +119,10 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
             dos.close();
 
             int serverResponseCode = conn.getResponseCode();
+            BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            mFileName = bf.readLine();
 
-            if(serverResponseCode == 200){
+            if (serverResponseCode == 200 && !mFileName.equals("0")) {
                 return RESULT_UPLOADED;
             } else {
                 return RESULT_FAILED;
@@ -124,21 +146,65 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
         notificationManager.cancel(ID_UPLOADING);
         switch (resultCode) {
             case RESULT_FAILED:
-                mNotification = new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("Uploading Picture")
-                        .setContentText("Upload process failed. Please try again.")
-                        .build();
-                notificationManager.notify(ID_FAILED, mNotification);
+                notifyUploadFailure();
                 break;
             case RESULT_UPLOADED:
-                mNotification = new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("Uploading Picture")
-                        .setContentText("Upload success!")
-                        .build();
-                notificationManager.notify(ID_UPLOADED, mNotification);
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, DATABASE_OPERATION_URI,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                notifyUploadSuccess();
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                notifyUploadFailure();
+                            }
+                        }) {
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> postParams = new HashMap<>();
+                        int timestamp = (int) ((new Date().getTime()) / 1000);
+                        postParams.put("request_code", "0");
+                        postParams.put("file_name", mFileName);
+                        postParams.put("lat", Double.toString(mLat));
+                        postParams.put("lng", Double.toString(mLng));
+                        postParams.put("timestamp", Integer.toString(timestamp));
+                        return postParams;
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String,String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded");
+                        return params;
+                    }
+                };
+                requestQueue.add(stringRequest);
                 break;
         }
+    }
+
+    private void notifyUploadFailure() {
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotification = new NotificationCompat.Builder(mContext)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("Uploading Picture")
+                .setContentText("Upload process failed. Please try again.")
+                .build();
+        notificationManager.notify(ID_FAILED, mNotification);
+    }
+
+    private void notifyUploadSuccess() {
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotification = new NotificationCompat.Builder(mContext)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("Uploading Picture")
+                .setContentText("Upload success!")
+                .build();
+        notificationManager.notify(ID_UPLOADED, mNotification);
     }
 }

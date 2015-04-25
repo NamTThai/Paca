@@ -10,9 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-/**
- * DrawerLayout installer which helps you to add left sliding panel to your activity
- */
 public class DrawerLayoutInstaller {
 
     public static final int DEFAULT_LEFT_DRAWER_WIDTH_DP = 240;

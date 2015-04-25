@@ -7,9 +7,6 @@ import android.graphics.Paint;
 
 import com.squareup.picasso.Transformation;
 
-/**
- * Created by froger_mcs on 11.08.2014.
- */
 public class RoundedTransformation implements Transformation {
     @Override
     public Bitmap transform(Bitmap source) {

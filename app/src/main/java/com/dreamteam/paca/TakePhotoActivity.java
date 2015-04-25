@@ -35,6 +35,8 @@ import butterknife.InjectView;
 public class TakePhotoActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener,
         CameraHostProvider {
     public static final String ARG_REVEAL_START_LOCATION = "reveal_start_location";
+    public static final String ARG_LAT = "latitude";
+    public static final String ARG_LNG = "longitude";
     public static final int RESULT_UPLOADING = 0;
 
     private static final Interpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
@@ -61,10 +63,12 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     @InjectView(R.id.btnTakePhoto)
     Button btnTakePhoto;
 
-    private boolean pendingIntro;
-    private int currentState;
+    private boolean mPendingIntro;
+    private int mCurrentState;
 
-    private File photoPath;
+    private File mPhotoPath;
+    private double mLatitude;
+    private double mLongitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +76,8 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         setContentView(R.layout.activity_take_photo);
         updateStatusBarColor();
         updateState(STATE_TAKE_PHOTO);
+        mLatitude = getIntent().getDoubleExtra(ARG_LAT, 100);
+        mLongitude = getIntent().getDoubleExtra(ARG_LNG, 200);
         setupRevealBackground(savedInstanceState);
         setupPhotoFilters();
 
@@ -80,7 +86,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             @Override
             public boolean onPreDraw() {
                 vUpperPanel.getViewTreeObserver().removeOnPreDrawListener(this);
-                pendingIntro = true;
+                mPendingIntro = true;
                 vUpperPanel.setTranslationY(-vUpperPanel.getHeight());
                 vLowerPanel.setTranslationY(vLowerPanel.getHeight());
                 return true;
@@ -107,7 +113,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
     @Override
     public void onBackPressed() {
-        if (currentState == STATE_SETUP_PHOTO) {
+        if (mCurrentState == STATE_SETUP_PHOTO) {
             btnTakePhoto.setEnabled(true);
             vUpperPanel.showPrevious();
             vLowerPanel.showPrevious();
@@ -136,8 +142,9 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     }
 
     public void onUploadClick(View view) {
-        if (photoPath != null) {
-            new UploadPhotoTask(this, photoPath.getName()).execute(photoPath.getAbsolutePath());
+        if (mPhotoPath != null) {
+            new UploadPhotoTask(this, mPhotoPath.getName(), mLatitude, mLongitude)
+                    .execute(mPhotoPath.getAbsolutePath());
             finish();
         }
     }
@@ -171,7 +178,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     public void onStateChange(int state) {
         if (RevealBackgroundView.STATE_FINISHED == state) {
             vTakePhotoRoot.setVisibility(View.VISIBLE);
-            if (pendingIntro) {
+            if (mPendingIntro) {
                 startIntroAnimation();
             }
         } else {
@@ -230,8 +237,8 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     }
 
     private void updateState(int state) {
-        currentState = state;
-        if (currentState == STATE_TAKE_PHOTO) {
+        mCurrentState = state;
+        if (mCurrentState == STATE_TAKE_PHOTO) {
             vUpperPanel.setInAnimation(this, R.anim.slide_in_from_right);
             vLowerPanel.setInAnimation(this, R.anim.slide_in_from_right);
             vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_left);
@@ -242,7 +249,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
                     ivTakenPhoto.setVisibility(View.GONE);
                 }
             }, 400);
-        } else if (currentState == STATE_SETUP_PHOTO) {
+        } else if (mCurrentState == STATE_SETUP_PHOTO) {
             vUpperPanel.setInAnimation(this, R.anim.slide_in_from_left);
             vLowerPanel.setInAnimation(this, R.anim.slide_in_from_left);
             vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_right);
@@ -289,7 +296,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         @Override
         public void saveImage(PictureTransaction xact, byte[] image) {
             super.saveImage(xact, image);
-            photoPath = getPhotoPath();
+            mPhotoPath = getPhotoPath();
         }
     }
 }

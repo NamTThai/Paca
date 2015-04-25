@@ -18,9 +18,6 @@ import android.widget.LinearLayout;
 
 import butterknife.InjectView;
 
-/**
- * Created by froger_mcs on 11.11.14.
- */
 public class CommentsActivity extends BaseActivity implements SendCommentButton.OnSendClickListener {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
 

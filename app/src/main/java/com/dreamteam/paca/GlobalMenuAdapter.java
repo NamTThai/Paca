@@ -14,9 +14,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * Created by Miroslaw Stanek on 30.01.15.
- */
 public class GlobalMenuAdapter extends ArrayAdapter<GlobalMenuAdapter.GlobalMenuItem> {
     private static final int TYPE_MENU_ITEM = 0;
     private static final int TYPE_DIVIDER = 1;
