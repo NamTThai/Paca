@@ -23,10 +23,12 @@ import android.widget.TextSwitcher;
 
 import com.android.volley.toolbox.NetworkImageView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -44,12 +46,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private static final int ANIMATED_ITEMS_COUNT = 2;
 
     private Context context;
-    private ArrayList<String> feedItems;
+    private ArrayList<JSONObject> feedItems;
     private int lastAnimatedPosition = -1;
     private int itemsCount = 0;
     private boolean animateItems = false;
 
-    private final Map<Integer, Integer> likesCount = new HashMap<>();
     private final Map<RecyclerView.ViewHolder, AnimatorSet> likeAnimations = new HashMap<>();
     private final ArrayList<Integer> likedPositions = new ArrayList<>();
 
@@ -59,10 +60,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private int loadingViewSize = Utils.dpToPx(200);
 
     public FeedAdapter(Context context) {
-        new FeedAdapter(context, new ArrayList<String>());
+        new FeedAdapter(context, new ArrayList<JSONObject>());
     }
 
-    public FeedAdapter(Context context, ArrayList<String> items) {
+    public FeedAdapter(Context context, ArrayList<JSONObject> items) {
         this.context = context;
         feedItems = items;
     }
@@ -126,10 +127,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     private void bindDefaultFeedItem(int position, CellFeedViewHolder holder) {
         position = position % feedItems.size();
-        String uri = ADDRESS_URI + feedItems.get(position);
+        String uri;
+        try {
+            uri = ADDRESS_URI + feedItems.get(position).getString("address");
+        } catch (JSONException e) {
+            uri = GalleryActivity.TOKEN_IMAGE_ADDESS;
+        }
         holder.ivFeedCenter.setImageUrl(uri, ((GalleryActivity) context).getImageLoader());
 
-        updateLikesCounter(holder, false, true);
+        updateLikesCounter(holder);
         updateHeartButton(holder, false);
 
         holder.btnDisLike.setTag(holder);
@@ -189,24 +195,39 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         return itemsCount;
     }
 
-    public ArrayList<String> getFeedItems() {
+    public ArrayList<JSONObject> getFeedItems() {
         return feedItems;
     }
 
-    public void setFeedItems(ArrayList<String> feedItems) {
+    public void setFeedItems(ArrayList<JSONObject> feedItems) {
         this.feedItems = feedItems;
     }
 
+    private void updateLikesCounter(CellFeedViewHolder holder) {
+        int currentLikesCount;
+        try {
+            currentLikesCount = feedItems.get(holder.getPosition()).getInt("likes");
+        } catch (JSONException e) {
+            currentLikesCount = 0;
+        }
+
+        String likesCountText = context.getResources().getQuantityString(
+                R.plurals.likes_count, currentLikesCount, currentLikesCount
+        );
+
+        holder.tsLikesCounter.setCurrentText(likesCountText);
+    }
+
     private void updateLikesCounter(CellFeedViewHolder holder, boolean animated, boolean like) {
-        int currentLikesCount = likesCount.get(holder.getPosition());
-        if(like) {
-            currentLikesCount = likesCount.get(holder.getPosition()) + 1;
+        int currentLikesCount;
+        try {
+            currentLikesCount = feedItems.get(holder.getPosition()).getInt("likes");
+        } catch (JSONException e) {
+            currentLikesCount = 0;
         }
-        if(!like){
-            currentLikesCount = likesCount.get(holder.getPosition()) - 1;
-        }
-        //TODO
-        //set likes here
+
+        currentLikesCount += like ? 1 : -1;
+
         String likesCountText = context.getResources().getQuantityString(
                 R.plurals.likes_count, currentLikesCount, currentLikesCount
         );
@@ -217,7 +238,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             holder.tsLikesCounter.setCurrentText(likesCountText);
         }
 
-        likesCount.put(holder.getPosition(), currentLikesCount);
+        // TODO send likes to server
+        //likesCount.put(holder.getPosition(), currentLikesCount);
     }
 
     private void updateHeartButton(final CellFeedViewHolder holder, boolean animated) {
@@ -269,7 +291,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void onClick(View view) {
         final int viewId = view.getId();
         switch (viewId) {
-            case R.id.btnDisLike:
+            case R.id.btn_dislike:
                 CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
                 if (!likedPositions.contains(holder.getPosition())) {
                     likedPositions.add(holder.getPosition());
@@ -277,12 +299,12 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                     //updateHeartButton(holder, true);
                 }
                 break;
-            case R.id.btnLike:
+            case R.id.btn_like:
                 holder = (CellFeedViewHolder) view.getTag();
                 if (!likedPositions.contains(holder.getPosition())) {
                     likedPositions.add(holder.getPosition());
                     updateLikesCounter(holder, true, true);
-                    //updateHeartButton(holder, true);
+                    updateHeartButton(holder, true);
                 }
                 break;
         }
@@ -351,14 +373,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         //set item count here
         itemsCount = 10;
         animateItems = animated;
-        fillLikesWithRandomValues();
         notifyDataSetChanged();
-    }
-
-    private void fillLikesWithRandomValues() {
-        for (int i = 0; i < getItemCount(); i++) {
-            likesCount.put(i, new Random().nextInt(100));
-        }
     }
 
     public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
@@ -373,9 +388,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
         @InjectView(R.id.ivFeedCenter)
         NetworkImageView ivFeedCenter;
-        @InjectView(R.id.btnDisLike)
+        @InjectView(R.id.btn_dislike)
         ImageButton btnDisLike;
-        @InjectView(R.id.btnLike)
+        @InjectView(R.id.btn_like)
         ImageButton btnLike;
         @InjectView(R.id.vBgLike)
         View vBgLike;

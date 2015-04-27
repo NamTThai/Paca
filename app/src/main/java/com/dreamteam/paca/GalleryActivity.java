@@ -54,9 +54,9 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     private static final int ANIM_DURATION_TOOLBAR = 300;
     private static final int ANIM_DURATION_FAB = 400;
 
-    private static final String GET_PICTURE_ADDRESS_URI =
+    public static final String GET_PICTURE_ADDRESS_URI =
             "http://nthai.cs.trincoll.edu/PacaServer/retrieve.php?lat=%1$s&lng=%2$s";
-    private static final String TOKEN_IMAGE_ADDESS =
+    public static final String TOKEN_IMAGE_ADDESS =
             "https://thisgreenearth.files.wordpress.com/2011/04/alpaca.jpg";
 
     private static final String RESOLVING_ERROR = "Resolving error";
@@ -289,18 +289,18 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         rvFeed.setLayoutManager(linearLayoutManager);
         feedAdapter = (FeedAdapter) rvFeed.getAdapter();
 
-        ArrayList<String> feedItems = new ArrayList<>();
+        ArrayList<JSONObject> feedItems = new ArrayList<>();
         if (response != null) {
             for (int i = 0; i < response.length(); i++) {
                 try {
                     JSONObject pictureObject = response.getJSONObject(i);
-                    feedItems.add(pictureObject.getString("address"));
+                    feedItems.add(pictureObject);
                 } catch (JSONException | NullPointerException e) {
-                    feedItems.add(TOKEN_IMAGE_ADDESS);
+                    // TODO
                 }
             }
         } else {
-            feedItems.add(TOKEN_IMAGE_ADDESS);
+            // TODO
         }
         
         if (feedAdapter == null) {
