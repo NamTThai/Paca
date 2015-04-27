@@ -36,7 +36,7 @@ public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
     private static final int RESULT_FAILED = 0;
     private static final int RESULT_UPLOADED = 1;
 
-    private static final String DATABASE_OPERATION_URI = "http://nthai.cs.trincoll.edu/PacaServer/db_operation.php";
+    public static final String DATABASE_OPERATION_URI = "http://nthai.cs.trincoll.edu/PacaServer/db_operation.php";
     private static final String UPLOAD_URI = "http://nthai.cs.trincoll.edu/PacaServer/upload_photo.php";
 
     private Notification mNotification;

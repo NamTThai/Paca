@@ -8,6 +8,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +53,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     private static final int ANIMATED_ITEMS_COUNT = 2;
 
-    private Context context;
+    private Context mContext;
     private ArrayList<JSONObject> feedItems;
     private int lastAnimatedPosition = -1;
     private int itemsCount = 0;
@@ -64,13 +72,13 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     public FeedAdapter(Context context, ArrayList<JSONObject> items) {
-        this.context = context;
+        this.mContext = context;
         feedItems = items;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.item_feed, parent, false);
+        final View view = LayoutInflater.from(mContext).inflate(R.layout.item_feed, parent, false);
         final CellFeedViewHolder cellFeedViewHolder = new CellFeedViewHolder(view);
         if (viewType == VIEW_TYPE_DEFAULT) {
             cellFeedViewHolder.btnDisLike.setOnClickListener(this);
@@ -78,7 +86,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             //cellFeedViewHolder.ivFeedCenter.setOnClickListener(this);
             cellFeedViewHolder.btnLike.setOnClickListener(this);
         } else if (viewType == VIEW_TYPE_LOADER) {
-            View bgView = new View(context);
+            View bgView = new View(mContext);
             bgView.setLayoutParams(new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             ));
@@ -88,7 +96,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(loadingViewSize, loadingViewSize);
             params.gravity = Gravity.CENTER;
-            SendingProgressView sendingProgressView = new SendingProgressView(context);
+            SendingProgressView sendingProgressView = new SendingProgressView(mContext);
             sendingProgressView.setLayoutParams(params);
             cellFeedViewHolder.vImageRoot.addView(sendingProgressView);
             cellFeedViewHolder.vSendingProgress = sendingProgressView;
@@ -105,7 +113,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
         if (position > lastAnimatedPosition) {
             lastAnimatedPosition = position;
-            view.setTranslationY(Utils.getScreenHeight(context));
+            view.setTranslationY(Utils.getScreenHeight(mContext));
             view.animate()
                     .translationY(0)
                     .setInterpolator(new DecelerateInterpolator(3.f))
@@ -133,7 +141,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         } catch (JSONException e) {
             uri = GalleryActivity.TOKEN_IMAGE_ADDESS;
         }
-        holder.ivFeedCenter.setImageUrl(uri, ((GalleryActivity) context).getImageLoader());
+        holder.ivFeedCenter.setImageUrl(uri, ((GalleryActivity) mContext).getImageLoader());
 
         updateLikesCounter(holder);
         updateHeartButton(holder, false);
@@ -211,7 +219,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             currentLikesCount = 0;
         }
 
-        String likesCountText = context.getResources().getQuantityString(
+        String likesCountText = mContext.getResources().getQuantityString(
                 R.plurals.likes_count, currentLikesCount, currentLikesCount
         );
 
@@ -228,7 +236,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
         currentLikesCount += like ? 1 : -1;
 
-        String likesCountText = context.getResources().getQuantityString(
+        String likesCountText = mContext.getResources().getQuantityString(
                 R.plurals.likes_count, currentLikesCount, currentLikesCount
         );
 
@@ -238,8 +246,41 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             holder.tsLikesCounter.setCurrentText(likesCountText);
         }
 
-        // TODO send likes to server
-        //likesCount.put(holder.getPosition(), currentLikesCount);
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        final JSONObject pictureObject = feedItems.get(holder.getPosition());
+        final String likes = Integer.toString(currentLikesCount);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, UploadPhotoTask.DATABASE_OPERATION_URI,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(GalleryActivity.TAG, "success: " + response);
+                        //notifyUploadSuccess();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(GalleryActivity.TAG, "failed: " + error.getMessage());
+                        //notifyUploadFailure();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> postParams = new HashMap<>();
+                postParams.put("request_code", "1");
+                postParams.put("id", pictureObject.optString("id", "0"));
+                postParams.put("likes", likes);
+                return postParams;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> params = new HashMap<>();
+                params.put("Content-Type", "application/x-www-form-urlencoded");
+                return params;
+            }
+        };
+        requestQueue.add(stringRequest);
     }
 
     private void updateHeartButton(final CellFeedViewHolder holder, boolean animated) {
