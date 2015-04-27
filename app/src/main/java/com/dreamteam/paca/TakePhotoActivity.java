@@ -290,7 +290,11 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
                     previewSizeElement = i;
                 }
             }
-            //previewSize = sizes.get(previewSizeElement);
+            /*
+            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            parameters1.setPreviewSize(sizes.get(previewSizeElement).width,
+            sizes.get(previewSizeElement).height);
+            */
             return previewSize;
         }
 
