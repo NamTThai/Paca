@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -60,7 +61,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     CameraView cameraView;
     @InjectView(R.id.rvFilters)
     RecyclerView rvFilters;
-    @InjectView(R.id.btnTakePhoto)
+    @InjectView(R.id.btn_take_photo)
     Button btnTakePhoto;
 
     private boolean mPendingIntro;
@@ -288,6 +289,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d(GalleryActivity.TAG, "saving image bitmap");
                     showTakenPicture(bitmap);
                 }
             });
@@ -295,6 +297,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public void saveImage(PictureTransaction xact, byte[] image) {
+            Log.d(GalleryActivity.TAG, "saving image bitmap");
             super.saveImage(xact, image);
             mPhotoPath = getPhotoPath();
         }

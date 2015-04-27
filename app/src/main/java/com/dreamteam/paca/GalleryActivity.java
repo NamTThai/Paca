@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -279,7 +280,7 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
     }
 
     private void setupFeed(JSONArray response) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this) {
             @Override
             protected int getExtraLayoutSpace(RecyclerView.State state) {
                 return 300;
@@ -310,6 +311,12 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     FeedContextMenuManager.getInstance().onScrolled(recyclerView, dx, dy);
+                    int visibleItemCount = linearLayoutManager.getChildCount();
+                    int totalItemCount = linearLayoutManager.getItemCount();
+                    int pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+                    if ( (visibleItemCount+pastVisiblesItems) >= totalItemCount) {
+                        Toast.makeText(GalleryActivity.this, "There are no more images to show", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         } else {

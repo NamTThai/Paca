@@ -149,7 +149,7 @@
                     android:layout_weight="1">
 
                     <Button
-                        android:id="@+id/btnTakePhoto"
+                        android:id="@+id/btn_take_photo"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:layout_gravity="center"
