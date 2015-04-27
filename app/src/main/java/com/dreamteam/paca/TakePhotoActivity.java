@@ -30,6 +30,7 @@ import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.InjectView;
 
@@ -274,6 +275,22 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
 
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
+            /*
+            TODO
+            Create a set Parameters catch exception here. This debug list gets all the supported camera sizes
+            */
+            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            int previewSizeElement = 0;
+            for(int i = 0; i < sizes.size(); i++) {
+                int camPreviewWidth = sizes.get(i).width;
+                int camPreviewHeight = sizes.get(i).height;
+                Log.d("myTag camera size list",
+                        Integer.toString(camPreviewWidth) + "x" + Integer.toString(camPreviewHeight));
+                if(camPreviewWidth == 640 && camPreviewHeight == 480){
+                    previewSizeElement = i;
+                }
+            }
+            //previewSize = sizes.get(previewSizeElement);
             return previewSize;
         }
 
