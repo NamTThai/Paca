@@ -1,0 +1,8 @@
+CHANGES NEEDED:
+
+-	Down button implemented
+-	-5 likes == removal
+-	Flag system
+-	Fix crashing error (show no_image.png instead)
+-	Solve for API22 Camera
+-	Revert name from Pacapon to PicPac
