@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewDebug;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -279,7 +280,8 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             TODO
             Create a set Parameters catch exception here. This debug list gets all the supported camera sizes
             */
-            List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
+            List<Camera.Size> sizes = parameters1.getSupportedPreviewSizes();
             int previewSizeElement = 0;
             for(int i = 0; i < sizes.size(); i++) {
                 int camPreviewWidth = sizes.get(i).width;
@@ -288,20 +290,20 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
                         Integer.toString(camPreviewWidth) + "x" + Integer.toString(camPreviewHeight));
                 if(camPreviewWidth == 640 && camPreviewHeight == 480){
                     previewSizeElement = i;
+                    Log.d("myTag", "match found at " + Integer.toString(previewSizeElement));
+                    //previewSize = sizes.get(previewSizeElement);
+                    //parameters1.setPreviewSize(sizes.get(previewSizeElement).width, sizes.get(previewSizeElement).height);
+                    Log.d("myTag", Integer.toString(previewSize.width) + "x" + Integer.toString(previewSize.height));
+
                 }
             }
-            /*
-            Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            parameters1.setPreviewSize(sizes.get(previewSizeElement).width,
-            sizes.get(previewSizeElement).height);
-            */
             return previewSize;
         }
 
         @Override
         public Camera.Parameters adjustPreviewParameters(Camera.Parameters parameters) {
             Camera.Parameters parameters1 = super.adjustPreviewParameters(parameters);
-            previewSize = parameters1.getPreviewSize();
+            //previewSize = parameters1.getPreviewSize();
             return parameters1;
         }
 
