@@ -17,6 +17,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -82,8 +83,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         final CellFeedViewHolder cellFeedViewHolder = new CellFeedViewHolder(view);
         if (viewType == VIEW_TYPE_DEFAULT) {
             cellFeedViewHolder.btnDisLike.setOnClickListener(this);
-            //cellFeedViewHolder.btnMore.setOnClickListener(this);
-            //cellFeedViewHolder.ivFeedCenter.setOnClickListener(this);
             cellFeedViewHolder.btnLike.setOnClickListener(this);
         } else if (viewType == VIEW_TYPE_LOADER) {
             View bgView = new View(mContext);
@@ -133,6 +132,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void bindDefaultFeedItem(int position, CellFeedViewHolder holder) {
         position = position % feedItems.size();
         String uri;
@@ -147,7 +147,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         updateHeartButton(holder, false);
 
         holder.btnDisLike.setTag(holder);
-        //holder.btnMore.setTag(position);
         holder.ivFeedCenter.setTag(holder);
         holder.btnLike.setTag(holder);
 
@@ -283,6 +282,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         requestQueue.add(stringRequest);
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void updateHeartButton(final CellFeedViewHolder holder, boolean animated) {
         if (animated) {
             if (!likeAnimations.containsKey(holder)) {
@@ -328,80 +328,74 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void updateHeartButton2(final CellFeedViewHolder holder, boolean animated) {
+        if (animated) {
+            if (!likeAnimations.containsKey(holder)) {
+                AnimatorSet animatorSet = new AnimatorSet();
+                likeAnimations.put(holder, animatorSet);
+
+                ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.btnDisLike, "rotation", 0f, 360f);
+                rotationAnim.setDuration(300);
+                rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
+
+                ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.btnDisLike, "scaleX", 0.2f, 1f);
+                bounceAnimX.setDuration(300);
+                bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
+
+                ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.btnDisLike, "scaleY", 0.2f, 1f);
+                bounceAnimY.setDuration(300);
+                bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
+                bounceAnimY.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        holder.btnDisLike.setImageResource(R.drawable.ic_heart_red);
+                    }
+                });
+
+                animatorSet.play(rotationAnim);
+                animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
+
+                animatorSet.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        resetLikeAnimationState(holder);
+                    }
+                });
+
+                animatorSet.start();
+            }
+        } else {
+            if (likedPositions.contains(holder.getPosition())) {
+                holder.btnDisLike.setImageResource(R.drawable.ic_heart_red);
+            } else {
+                holder.btnDisLike.setImageResource(R.drawable.ic_heart_outline_grey);
+            }
+        }
+    }
+
     @Override
     public void onClick(View view) {
         final int viewId = view.getId();
         switch (viewId) {
             case R.id.btn_dislike:
-                CellFeedViewHolder holder = (CellFeedViewHolder) view.getTag();
-                if (!likedPositions.contains(holder.getPosition())) {
-                    likedPositions.add(holder.getPosition());
-                    updateLikesCounter(holder, true, false);
-                    //updateHeartButton(holder, true);
+                CellFeedViewHolder holderD = (CellFeedViewHolder) view.getTag();
+                if (!likedPositions.contains(holderD.getPosition())) {
+                    likedPositions.add(holderD.getPosition());
+                    updateLikesCounter(holderD, true, false);
+                    updateHeartButton2(holderD, true);
                 }
                 break;
             case R.id.btn_like:
-                holder = (CellFeedViewHolder) view.getTag();
-                if (!likedPositions.contains(holder.getPosition())) {
-                    likedPositions.add(holder.getPosition());
-                    updateLikesCounter(holder, true, true);
-                    updateHeartButton(holder, true);
+                CellFeedViewHolder holderL = (CellFeedViewHolder) view.getTag();
+                if (!likedPositions.contains(holderL.getPosition())) {
+                    likedPositions.add(holderL.getPosition());
+                    updateLikesCounter(holderL, true, true);
+                    updateHeartButton(holderL, true);
                 }
                 break;
         }
     }
-
-    /*private void animatePhotoLike(final CellFeedViewHolder holder) {
-        if (!likeAnimations.containsKey(holder)) {
-            holder.vBgLike.setVisibility(View.VISIBLE);
-            holder.ivLike.setVisibility(View.VISIBLE);
-
-            holder.vBgLike.setScaleY(0.1f);
-            holder.vBgLike.setScaleX(0.1f);
-            holder.vBgLike.setAlpha(1f);
-            holder.ivLike.setScaleY(0.1f);
-            holder.ivLike.setScaleX(0.1f);
-
-            AnimatorSet animatorSet = new AnimatorSet();
-            likeAnimations.put(holder, animatorSet);
-
-            ObjectAnimator bgScaleYAnim = ObjectAnimator.ofFloat(holder.vBgLike, "scaleY", 0.1f, 1f);
-            bgScaleYAnim.setDuration(200);
-            bgScaleYAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
-            ObjectAnimator bgScaleXAnim = ObjectAnimator.ofFloat(holder.vBgLike, "scaleX", 0.1f, 1f);
-            bgScaleXAnim.setDuration(200);
-            bgScaleXAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
-            ObjectAnimator bgAlphaAnim = ObjectAnimator.ofFloat(holder.vBgLike, "alpha", 1f, 0f);
-            bgAlphaAnim.setDuration(200);
-            bgAlphaAnim.setStartDelay(150);
-            bgAlphaAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
-
-            ObjectAnimator imgScaleUpYAnim = ObjectAnimator.ofFloat(holder.ivLike, "scaleY", 0.1f, 1f);
-            imgScaleUpYAnim.setDuration(300);
-            imgScaleUpYAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
-            ObjectAnimator imgScaleUpXAnim = ObjectAnimator.ofFloat(holder.ivLike, "scaleX", 0.1f, 1f);
-            imgScaleUpXAnim.setDuration(300);
-            imgScaleUpXAnim.setInterpolator(DECCELERATE_INTERPOLATOR);
-
-            ObjectAnimator imgScaleDownYAnim = ObjectAnimator.ofFloat(holder.ivLike, "scaleY", 1f, 0f);
-            imgScaleDownYAnim.setDuration(300);
-            imgScaleDownYAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
-            ObjectAnimator imgScaleDownXAnim = ObjectAnimator.ofFloat(holder.ivLike, "scaleX", 1f, 0f);
-            imgScaleDownXAnim.setDuration(300);
-            imgScaleDownXAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
-
-            animatorSet.playTogether(bgScaleYAnim, bgScaleXAnim, bgAlphaAnim, imgScaleUpYAnim, imgScaleUpXAnim);
-            animatorSet.play(imgScaleDownYAnim).with(imgScaleDownXAnim).after(imgScaleUpYAnim);
-
-            animatorSet.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    resetLikeAnimationState(holder);
-                }
-            });
-            animatorSet.start();
-        }
-    }*/
 
     private void resetLikeAnimationState(CellFeedViewHolder holder) {
         likeAnimations.remove(holder);
@@ -410,8 +404,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     public void updateItems(boolean animated) {
-        //TODO
-        //set item count here
         itemsCount = 10;
         animateItems = animated;
         notifyDataSetChanged();
