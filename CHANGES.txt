@@ -6,3 +6,4 @@ CHANGES NEEDED:
 -	Fix crashing error (show no_image.png instead)
 -	Solve for API22 Camera
 -	Revert name from Pacapon to PicPac
+-	Work on menu bar functionality
