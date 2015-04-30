@@ -11,6 +11,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
 
+/**
+ * Created by Miroslaw Stanek on 19.01.15.
+ */
+
 public class BaseActivity extends ActionBarActivity {
 
     @Optional

@@ -9,6 +9,10 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
+/**
+ * Created by froger_mcs on 16.12.14.
+ */
+
 public class FeedContextMenuManager extends RecyclerView.OnScrollListener implements View.OnAttachStateChangeListener {
 
     private static FeedContextMenuManager instance;

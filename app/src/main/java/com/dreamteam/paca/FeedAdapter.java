@@ -42,6 +42,10 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+/**
+ * Created by froger_mcs on 05.11.14.
+ */
+
 public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
     private static final int VIEW_TYPE_DEFAULT = 1;
     private static final int VIEW_TYPE_LOADER = 2;

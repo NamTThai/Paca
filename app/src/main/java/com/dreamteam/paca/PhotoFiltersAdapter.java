@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
 
+/**
+ * Created by froger_mcs on 11.11.14.
+ */
+
 public class PhotoFiltersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;

@@ -35,6 +35,10 @@ import java.util.List;
 
 import butterknife.InjectView;
 
+/**
+ * Created by Miroslaw Stanek on 08.02.15.
+ */
+
 public class TakePhotoActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener,
         CameraHostProvider {
     public static final String ARG_REVEAL_START_LOCATION = "reveal_start_location";
