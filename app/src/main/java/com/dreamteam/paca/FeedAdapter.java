@@ -63,8 +63,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private final Map<RecyclerView.ViewHolder, AnimatorSet> likeAnimations = new HashMap<>();
     private final ArrayList<Integer> likedPositions = new ArrayList<>();
 
-    private OnFeedItemClickListener onFeedItemClickListener;
-
     private boolean showLoadingView = false;
     private int loadingViewSize = Utils.dpToPx(200);
 
@@ -409,10 +407,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         notifyDataSetChanged();
     }
 
-    public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
-        this.onFeedItemClickListener = onFeedItemClickListener;
-    }
-
     public void showLoadingView() {
         showLoadingView = true;
         notifyItemChanged(0);
@@ -442,11 +436,5 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             ButterKnife.inject(this, view);
         }
 
-    }
-
-    public interface OnFeedItemClickListener {
-        public void onCommentsClick(View v, int position);
-
-        public void onMoreClick(View v, int position);
     }
 }

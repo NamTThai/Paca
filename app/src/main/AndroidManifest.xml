@@ -29,10 +29,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CommentsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.TransparentActivity" />
-        <activity
             android:name=".TakePhotoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.TransparentActivity" />

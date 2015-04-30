@@ -46,8 +46,7 @@ import butterknife.InjectView;
 
 
 public class GalleryActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,FeedAdapter.OnFeedItemClickListener,
-        FeedContextMenu.OnFeedContextMenuItemClickListener {
+        GoogleApiClient.OnConnectionFailedListener {
     public static final String TAG = GalleryActivity.class.getName();
     private static final int REQUEST_TAKE_PHOTO = 1;
 
@@ -305,7 +304,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
         
         if (feedAdapter == null) {
             feedAdapter = new FeedAdapter(this, feedItems);
-            feedAdapter.setOnFeedItemClickListener(this);
             rvFeed.setAdapter(feedAdapter);
             rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
@@ -383,41 +381,6 @@ public class GalleryActivity extends BaseActivity implements GoogleApiClient.Con
                     }
                 })
                 .show();
-    }
-
-    @Override
-    public void onCommentsClick(View v, int position) {
-        final Intent intent = new Intent(this, CommentsActivity.class);
-        int[] startingLocation = new int[2];
-        v.getLocationOnScreen(startingLocation);
-        intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
-    }
-
-    @Override
-    public void onMoreClick(View v, int itemPosition) {
-        FeedContextMenuManager.getInstance().toggleContextMenuFromView(v, itemPosition, this);
-    }
-
-    @Override
-    public void onReportClick(int feedItem) {
-        FeedContextMenuManager.getInstance().hideContextMenu();
-    }
-
-    @Override
-    public void onSharePhotoClick(int feedItem) {
-        FeedContextMenuManager.getInstance().hideContextMenu();
-    }
-
-    @Override
-    public void onCopyShareUrlClick(int feedItem) {
-        FeedContextMenuManager.getInstance().hideContextMenu();
-    }
-
-    @Override
-    public void onCancelClick(int feedItem) {
-        FeedContextMenuManager.getInstance().hideContextMenu();
     }
 
     public void onTakePhotoClick(View view) {

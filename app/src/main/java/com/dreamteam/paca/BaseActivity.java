@@ -11,7 +11,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
 
-public class BaseActivity extends ActionBarActivity implements GlobalMenuView.OnHeaderClickListener {
+public class BaseActivity extends ActionBarActivity {
 
     @Optional
     @InjectView(R.id.toolbar)
@@ -42,18 +42,6 @@ public class BaseActivity extends ActionBarActivity implements GlobalMenuView.On
 
     protected boolean shouldInstallDrawer() {
         return true;
-    }
-
-    private void setupDrawer() {
-        GlobalMenuView menuView = new GlobalMenuView(this);
-        menuView.setOnHeaderClickListener(this);
-
-        drawerLayout = DrawerLayoutInstaller.from(this)
-                .drawerRoot(R.layout.drawer_root)
-                .drawerLeftView(menuView)
-                .drawerLeftWidth(Utils.dpToPx(300))
-                .withNavigationIconToggler(getToolbar())
-                .build();
     }
 
     @Override
