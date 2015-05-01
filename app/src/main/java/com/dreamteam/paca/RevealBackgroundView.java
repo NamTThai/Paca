@@ -15,7 +15,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 
 /**
- * Created by Miroslaw Stanek on 18.01.15.
+ * Created by Miroslaw Stanek on 18.01.15. Used for PicPac
  */
 
 public class RevealBackgroundView extends View {

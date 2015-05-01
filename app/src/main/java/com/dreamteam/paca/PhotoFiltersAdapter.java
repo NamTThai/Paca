@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 
 /**
- * Created by froger_mcs on 11.11.14.
+ * Created by froger_mcs on 11.11.14. Used for PicPac
  */
 
 public class PhotoFiltersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

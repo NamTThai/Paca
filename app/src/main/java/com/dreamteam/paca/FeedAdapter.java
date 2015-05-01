@@ -44,6 +44,9 @@ import butterknife.InjectView;
 
 /**
  * Created by froger_mcs on 05.11.14.
+ *  Edited by:
+ *          Nicky Thai
+ *          Dan Flanagan
  */
 
 public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {

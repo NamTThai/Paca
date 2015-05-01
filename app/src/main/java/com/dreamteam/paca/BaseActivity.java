@@ -13,6 +13,11 @@ import butterknife.Optional;
 
 /**
  * Created by Miroslaw Stanek on 19.01.15.
+ *  Edited by:
+ *          Nicky Thai
+ *          Dan Flanagan
+ *          Jason Katz
+ *          Max LeMerle
  */
 
 public class BaseActivity extends ActionBarActivity {

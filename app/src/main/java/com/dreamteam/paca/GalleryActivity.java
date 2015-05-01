@@ -43,8 +43,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import butterknife.InjectView;
-
-
+/**
+ * Created by Nicky Thai
+ * Edited by:
+ *          Max LeMerle
+ *          Dan Flanagan
+ *          Jason Katz
+ */
 public class GalleryActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
     public static final String TAG = GalleryActivity.class.getName();

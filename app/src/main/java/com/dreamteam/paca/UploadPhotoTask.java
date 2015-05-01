@@ -27,7 +27,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
+/**
+ * Created by Nicky Thai
+ */
 public class UploadPhotoTask extends AsyncTask<String, Void, Integer> {
     public static final int ID_UPLOADING = 0;
     public static final int ID_FAILED = 1;

@@ -8,7 +8,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 /**
- * Created by froger_mcs on 05.11.14.
+ * Created by froger_mcs on 05.11.14. Used for PicPac
  */
 
 public class Utils {

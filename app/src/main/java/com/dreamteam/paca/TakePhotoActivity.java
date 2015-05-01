@@ -37,6 +37,9 @@ import butterknife.InjectView;
 
 /**
  * Created by Miroslaw Stanek on 08.02.15.
+ * Edited by:
+ *          Nicky Thai
+ *          Dan Flanagan
  */
 
 public class TakePhotoActivity extends BaseActivity implements RevealBackgroundView.OnStateChangeListener,

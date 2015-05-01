@@ -10,7 +10,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 /**
- * Created by froger_mcs on 16.12.14.
+ * Created by froger_mcs on 16.12.14. Used for PicPac
  */
 
 public class FeedContextMenuManager extends RecyclerView.OnScrollListener implements View.OnAttachStateChangeListener {

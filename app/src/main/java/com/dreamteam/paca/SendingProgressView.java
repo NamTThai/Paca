@@ -22,6 +22,8 @@ import android.view.animation.OvershootInterpolator;
 
 /**
  * Created by Miroslaw Stanek on 28.02.15.
+ * Edited by:
+ *          Nicky Thai
  */
 
 public class SendingProgressView extends View {
